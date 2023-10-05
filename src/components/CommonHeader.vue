@@ -38,10 +38,13 @@
                     </span>
                 </template>
             </el-input>
-<!--            TODO 消息数字展示-->
-            <el-button class="message-button" @click="handleMessage">
-                <i class="el-icon-message-solid"></i>
-            </el-button>
+<!--            TODO 消息数字后端取-->
+            <el-badge :value="1" class="message-number">
+                <el-button class="message-button" @click="handleMessage">
+                    <i class="el-icon-message-solid"></i>
+                </el-button>
+            </el-badge>
+
             <el-dropdown class="avatar-container">
                 <div class="avatar-wrapper">
                     <!--                    TODO 图片的清晰度-->
@@ -174,6 +177,11 @@ export default {
 .el-icon-message-solid {
     font-size: 2.4rem;
     transition: all 0.3s;
+}
+
+/deep/ .el-badge__content.is-fixed {
+    top: 1.2rem;
+    right: 2.9rem;
 }
 
 .avatar-wrapper {
