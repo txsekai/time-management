@@ -3,6 +3,7 @@ import App from './App.vue'
 import Element from "element-ui";
 import echarts from "echarts";
 import router from "./router/index";
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false
 Vue.use(Element);

@@ -1,5 +1,7 @@
 <template>
-    <common-header />
+    <el-container>
+        <common-header />
+    </el-container>
 </template>
 
 <script>
@@ -15,4 +17,8 @@ export default {
 </script>
 
 <style scoped>
+.el-container {
+    flex-direction: column;
+}
+
 </style>
