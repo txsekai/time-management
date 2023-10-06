@@ -1,0 +1,44 @@
+.el-date-picker__header-label.active, .el-date-picker__header-label:hover,
+.el-picker-panel__icon-btn:hover,
+.el-date-table td.available:hover,
+.el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell,
+.el-month-table td .cell:hover,
+.el-month-table td.current:not(.disabled) .cell{
+    color: #cf711f;
+}
+
+.el-input.is-active .el-input__inner, .el-input__inner:focus {
+    border-color: #cf711f;
+}
+
+.el-date-table td.current:not(.disabled) span {
+    background-color: #cf711f;;
+}
+
+.el-calendar__title {
+    color: #cf711f;
+}
+
+.el-calendar-table .el-calendar-day {
+    height: 5.6rem;
+}
+
+.el-calendar__header .el-button:focus, .el-button:hover {
+    border-color: #e67e22;
+    background-color: #fdf2e9;
+    color: #cf711f;
+}
+
+.el-calendar__header .el-button:active {
+    border-color: #e67e22;
+    color: #cf711f;
+}
+
+.el-calendar-table .el-calendar-day:hover,
+.el-calendar-table td.is-selected {
+    background-color: #fdf2e9;
+}
+
+.el-backtop, .el-calendar-table td.is-today {
+    color: #cf711f;
+}

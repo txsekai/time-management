@@ -107,7 +107,7 @@ export default {
     align-items: center;
     background-color: #fdf2e9;
 
-    height: 9.6rem;
+    height: 6.4rem;
     padding: 0 4.8rem;
 }
 
@@ -158,6 +158,10 @@ export default {
     display: flex;
     align-items: center;
     cursor: pointer;
+}
+
+/deep/ .right-menu .el-input__inner {
+    border-radius: 1rem;
 }
 
 .el-input__suffix:hover {
