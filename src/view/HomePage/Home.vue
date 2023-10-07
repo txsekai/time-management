@@ -4,7 +4,7 @@
         <el-main class="section-main">
             <div class="container grid">
                 <el-card class="card">
-                    <div id="oneDayFocusTime" style="width: 60rem; height: 30rem"></div>
+                    <div id="oneDayFocusTime" style="width: 100%; height: 23rem"></div>
 <!--                    TODO show more button && chart label-->
                 </el-card>
 
@@ -48,7 +48,7 @@
                             class="to-do-detail"
                             :data="toDoData"
                         >
-                            <el-table-column label="待办事项">
+                            <el-table-column label="选择日所有事项">
                                 <template slot-scope="scope">
                                     <i class="el-icon-alarm-clock"></i>
                                     <span style="margin-left: 1rem">{{ scope.row.toDoType}}</span>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import CommonHeader from '../components/CommonHeader.vue'
+import CommonHeader from '../../commonComponents/CommonHeader.vue'
 import * as echarts from "echarts";
 
 export default {
@@ -85,7 +85,32 @@ export default {
 
     data() {
         return {
+            // TODO 数据太多要用懒加载
             focusOnRecordingData: [{
+                focusType: '运动',
+                timeSlot: '20:00~21:00',
+                time: '1小时'
+            },{
+                focusType: '学习',
+                timeSlot: '21:00~22:30',
+                time: '1.5小时'
+            },{
+                focusType: '运动',
+                timeSlot: '20:00~21:00',
+                time: '1小时'
+            },{
+                focusType: '学习',
+                timeSlot: '21:00~22:30',
+                time: '1.5小时'
+            },{
+                focusType: '运动',
+                timeSlot: '20:00~21:00',
+                time: '1小时'
+            },{
+                focusType: '学习',
+                timeSlot: '21:00~22:30',
+                time: '1.5小时'
+            },{
                 focusType: '运动',
                 timeSlot: '20:00~21:00',
                 time: '1小时'
@@ -99,6 +124,36 @@ export default {
             calendarDate: new Date(),
             toDoData: [
                 {
+                    toDoType: '拍摄',
+                    timeSlotDoing: '20:00~21:00',
+                    timeDoing: '1小时',
+                    priority: 2
+                },{
+                    toDoType: '读书',
+                    timeSlotDoing: '21:00~22:42',
+                    timeDoing: '1.42小时',
+                    priority: 3
+                },{
+                    toDoType: '拍摄',
+                    timeSlotDoing: '20:00~21:00',
+                    timeDoing: '1小时',
+                    priority: 2
+                },{
+                    toDoType: '读书',
+                    timeSlotDoing: '21:00~22:42',
+                    timeDoing: '1.42小时',
+                    priority: 3
+                },{
+                    toDoType: '拍摄',
+                    timeSlotDoing: '20:00~21:00',
+                    timeDoing: '1小时',
+                    priority: 2
+                },{
+                    toDoType: '读书',
+                    timeSlotDoing: '21:00~22:42',
+                    timeDoing: '1.42小时',
+                    priority: 3
+                },{
                     toDoType: '拍摄',
                     timeSlotDoing: '20:00~21:00',
                     timeDoing: '1小时',
@@ -123,19 +178,25 @@ export default {
             // TODO 数据从后端取
             const options = {
                 xAxis: {
-                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
                 },
                 yAxis: {},
                 series: [
                     {
                         type: 'bar',
-                        data: [23, 24, 18, 25, 27, 28, 25],
+                        data: [23, 24, 18, 25, 27, 28, 25,90, 24, 18, 25, 27, 28, 110],
                         color: "#cf711f"
                     }
                 ]
             }
 
             chart.setOption(options)
+            window.addEventListener('resize', () => {chart.resize()})
+            window.onresize = () => {
+                clearTimeout(this.timer)
+                this.timer = setTimeout(() => {
+                }, 300)
+            }
         },
     }
 }
@@ -148,11 +209,13 @@ export default {
 
 .section-main {
     padding: 2.4rem 0;
+    height: calc(100vh - 6.4rem);
 }
 
 .container {
     padding: 0 3.6rem;
     margin: 0 auto;
+    height: 100%;
 }
 
 .grid {
@@ -161,14 +224,21 @@ export default {
     row-gap: 1.6rem;
 
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto auto;
+    grid-template-rows: 40% 60%;
 }
 
 .card {
     border-radius: 11px;
+    overflow: auto;
 }
 
+/deep/ .el-card__body {
+    padding: 0.2rem;
+}
 
+.el-table{
+    font-size: 62.5%;
+}
 
 /deep/ .el-table thead {
     color: #cf711f;
@@ -193,11 +263,20 @@ export default {
 
 /deep/ .el-calendar__header {
     border-bottom: 0;
-    padding: 1.2rem 2rem 0.6rem;
+    padding: 1rem 2rem 0.2rem;
 }
 
 /deep/ .el-calendar__body {
     padding: 0.6rem 2rem 3.5rem;
+}
+
+/deep/ .el-calendar-table thead th {
+    padding: 0.8rem 0;
+}
+
+/deep/ .el-calendar-table .el-calendar-day {
+    height: 4.8rem;
+    padding: 0.6rem;
 }
 
 .to-do-detail {

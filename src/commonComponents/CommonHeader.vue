@@ -25,7 +25,7 @@
         </div>
 
         <div class="right-menu">
-<!--            TODO maxLength? 去抖？-->
+<!--            TODO maxLength? 去抖？历史记录 clearable-->
             <el-input v-model="searchContent">
                 <template slot="suffix">
                     <span class="el-input__suffix">

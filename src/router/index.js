@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from "../view/Home.vue";
+import Home from "../view/HomePage/Home.vue";
+import List from "../view/ListPage/List.vue"
 
 Vue.use(VueRouter)
 
@@ -13,6 +14,7 @@ const routes = [
         children: [
             //  子路由
             { path: 'home', component: Home },
+            { path: 'list', component: List },
         ]
     },
 ]
