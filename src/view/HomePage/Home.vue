@@ -1,6 +1,5 @@
 <template>
     <el-container>
-        <common-header/>
         <el-main class="section-main">
             <div class="container grid">
                 <el-card class="card">
@@ -73,15 +72,10 @@
 </template>
 
 <script>
-import CommonHeader from '../../commonComponents/CommonHeader.vue'
 import * as echarts from "echarts";
 
 export default {
     name: 'Home',
-
-    components: {
-        CommonHeader,
-    },
 
     data() {
         return {
@@ -203,21 +197,6 @@ export default {
 </script>
 
 <style scoped>
-.el-container {
-    flex-direction: column;
-}
-
-.section-main {
-    padding: 2.4rem 0;
-    height: calc(100vh - 6.4rem);
-}
-
-.container {
-    padding: 0 3.6rem;
-    margin: 0 auto;
-    height: 100%;
-}
-
 .grid {
     display: grid;
     column-gap: 5.6rem;
@@ -227,21 +206,17 @@ export default {
     grid-template-rows: 40% 60%;
 }
 
-.card {
-    border-radius: 11px;
-    overflow: auto;
-}
-
 /deep/ .el-card__body {
     padding: 0.2rem;
 }
 
-.el-table{
-    font-size: 62.5%;
-}
-
 /deep/ .el-table thead {
     color: #cf711f;
+}
+
+.el-date-picker {
+    top: 12.6rem !important;
+    left: 130.7rem !important;
 }
 
 .el-date-editor.el-input, .el-date-editor.el-input__inner {
@@ -277,9 +252,5 @@ export default {
 /deep/ .el-calendar-table .el-calendar-day {
     height: 4.8rem;
     padding: 0.6rem;
-}
-
-.to-do-detail {
-
 }
 </style>

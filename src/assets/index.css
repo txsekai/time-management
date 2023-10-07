@@ -1,6 +1,25 @@
-.el-date-picker {
-    top: 12.6rem !important;
-    left: 130.7rem !important;
+.el-container {
+    flex-direction: column;
+}
+
+.section-main {
+    padding: 2.4rem 0;
+    height: calc(100vh - 6.4rem);
+}
+
+.container {
+    padding: 0 3.6rem;
+    margin: 0 auto;
+    height: 100%;
+}
+
+.card {
+    border-radius: 11px;
+    overflow: auto;
+}
+
+.el-table{
+    font-size: 62.5%;
 }
 
 .el-picker-panel {
@@ -29,13 +48,13 @@
     color: #cf711f;
 }
 
-.el-calendar__header .el-button:focus, .el-button:hover {
+.el-button:focus, .el-button:hover {
     border-color: #e67e22;
     background-color: #fdf2e9;
     color: #cf711f;
 }
 
-.el-calendar__header .el-button:active {
+.el-button:active {
     border-color: #e67e22;
     color: #cf711f;
 }
@@ -51,7 +70,7 @@
 
 /* 修改滚动条的样式 */
 ::-webkit-scrollbar {
-    width: 0.5rem; /* 设置滚动条宽度 */
+    width: 0.4rem; /* 设置滚动条宽度 */
 }
 
 /* 修改滚动条轨道的样式 */
@@ -61,11 +80,11 @@
 
 /* 修改滚动条滑块的样式 */
 ::-webkit-scrollbar-thumb {
-    background-color: #f5bd8c; /* 设置滚动条滑块的背景颜色 */
+    background-color: #f3cba7; /* 设置滚动条滑块的背景颜色 */
     border-radius: 7rem;
 }
 
 /* 修改滚动条滑块悬停时的样式 */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #f5a158; /* 设置滚动条滑块悬停时的背景颜色 */
+    background-color: #f8b983; /* 设置滚动条滑块悬停时的背景颜色 */
 }

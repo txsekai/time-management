@@ -14,9 +14,9 @@ const routes = [
         children: [
             //  子路由
             { path: 'home', component: Home },
-            { path: 'list', component: List },
         ]
     },
+    { path: '/list', component: List },
 ]
 
 const router = new VueRouter({
