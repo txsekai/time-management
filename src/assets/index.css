@@ -13,6 +13,11 @@
     height: 100%;
 }
 
+.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
+    background-color: #fdf2e9;
+    color: #cf711f;
+}
+
 .card {
     border-radius: 11px;
     overflow: auto;

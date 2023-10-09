@@ -220,7 +220,7 @@ export default {
 }
 
 .el-date-editor.el-input, .el-date-editor.el-input__inner {
-    width: 13rem;
+    width: 100%;
 }
 
 .calendar-card {

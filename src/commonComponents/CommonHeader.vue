@@ -5,7 +5,7 @@
                 <!--                TODO 设计logo-->
                 <ion-icon name="logo-ionic" class="logo"></ion-icon>
             </router-link>
-
+<!--TODO 在哪个tab，哪个tab就高亮-->
             <div class="main-nav">
                 <ul class="main-nav-list">
                     <li>
@@ -196,5 +196,23 @@ export default {
     height: 4.4rem;
     width: 4.4rem;
     border-radius: 50%;
+}
+
+.el-dropdown-menu {
+    margin: 0.2rem 0;
+    padding: 0.5rem 0;
+    border-radius: 7px;
+}
+
+.el-dropdown-menu__item, .el-menu-item {
+    font-size: 62.5%;
+}
+
+.el-dropdown-menu__item {
+    line-height: 2.8rem;
+}
+
+.el-dropdown-menu__item, .el-menu-item {
+    padding: 0 1.2rem;
 }
 </style>
