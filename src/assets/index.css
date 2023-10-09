@@ -93,3 +93,23 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: #f8b983; /* 设置滚动条滑块悬停时的背景颜色 */
 }
+
+.el-tooltip__popper.is-dark {
+    background-color: #fdf2e9;
+    color: #cf711f;
+}
+
+.el-tooltip__popper {
+    font-size: 62.5%;
+    line-height: 1;
+    padding: 0.8rem;
+}
+
+.el-tooltip__popper[x-placement^=bottom] {
+    margin-top: 0.7rem;
+}
+
+.el-tooltip__popper[x-placement^=bottom] .popper__arrow::after,
+.el-tooltip__popper[x-placement^=bottom] .popper__arrow {
+    border-bottom-color:  #fdf2e9;
+}

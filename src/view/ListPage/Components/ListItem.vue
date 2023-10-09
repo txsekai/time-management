@@ -1,49 +1,35 @@
 <template>
     <div>
-        <!--        <el-row v-for="(task, index) in taskList" :key="index">-->
-
-        <!--            <div v-if="task.isEditing" style="display: flex">-->
-        <!--                <input type="checkbox" v-model="task.complete"/>-->
-        <!--                <el-input v-model="task.content" @blur="task.isEditing = false"></el-input>-->
-        <!--            </div>-->
-
-        <!--            <div v-else @click="task.isEditing = true" style="display: flex">-->
-        <!--                <input type="checkbox" v-model="task.complete"/>-->
-        <!--                <span>{{ task.content }}</span>-->
-        <!--            </div>-->
-        <!--        </el-row>-->
-
-
-        <!--     点击button在上面加一行空白行 ,
-                    移开输入框光标时候：
-                        没有输入点其他地方就取消这行；
-                        有输入点其他地方就展示这行
-                 再点击这行，进入编辑模式-->
-
-        <!--        <el-row-->
-        <!--                v-for="(task, index) in taskList"-->
-        <!--                :key="index"-->
-        <!--        >-->
-        <!--            <div v-if="!isShow" style="display: flex">-->
-        <!--                <input type="checkbox" v-model="task.complete"/>-->
-        <!--                <el-input v-model="task.content" ref="taskInputs" @blur="inputBlur(task, index)"></el-input>-->
-        <!--            </div>-->
-        <!--           <div v-else style="display: flex">-->
-        <!--               <input type="checkbox" v-model="task.complete"/>-->
-        <!--               <div>{{ task.content }}</div>-->
-        <!--           </div>-->
-
-        <!--        </el-row>-->
-
         <el-row v-for="(task, index) in taskList" :key="index">
-            <div style="display: flex">
+            <div class="task">
                 <input type="checkbox" v-model="task.complete"/>
-                <template v-if="!task.editing">
-                    <div @click="startEditing(task)">{{ task.content }}</div>
-                </template>
-                <template v-else>
-                    <el-input v-model="task.content" ref="taskInputs" @blur="inputBlur(task, index)"></el-input>
-                </template>
+                <div class="taskDetail">
+                    <template v-if="!task.editing">
+                        <div @click="startEditing(task)">{{ task.content }}</div>
+                    </template>
+                    <template v-else>
+                        <div class="inputAndSettings">
+                            <el-input v-model="task.content" ref="taskInputs" @blur="inputBlur(task, index)"></el-input>
+                            <el-row style="display: flex">
+                                <el-tooltip content="标签" placement="bottom-start">
+                                    <el-button class="settingIcon" icon="el-icon-discount"></el-button>
+                                </el-tooltip>
+                                <el-tooltip content="日期" placement="bottom-start">
+                                    <el-button class="settingIcon" icon="el-icon-date"></el-button>
+                                </el-tooltip>
+                                <el-tooltip content="时间" placement="bottom-start">
+                                    <el-button class="settingIcon" icon="el-icon-time"></el-button>
+                                </el-tooltip>
+                                <el-tooltip content="重复" placement="bottom-start">
+                                    <el-button class="settingIcon" icon="el-icon-refresh"></el-button>
+                                </el-tooltip>
+                                <el-tooltip content="优先级" placement="bottom-start">
+                                    <el-button class="settingIcon" icon="el-icon-star-on"></el-button>
+                                </el-tooltip>
+                            </el-row>
+                        </div>
+                    </template>
+                </div>
             </div>
         </el-row>
 
@@ -76,7 +62,7 @@ export default {
                 const inputElements = this.$refs.taskInputs
                 const lastIndex = inputElements.length - 1
                 const lastInputElement = inputElements[lastIndex]
-                lastInputElement.$refs.input.focus();
+                lastInputElement.focus();
             })
         },
         inputBlur(task, index) {
@@ -88,24 +74,49 @@ export default {
             }
         },
         startEditing(task) {
-            debugger
             task.editing = true
+            // TODO 光标编辑时候focus
             this.$nextTick(() => {
                 const inputElement = this.$refs.taskInputs;
                 // const inputElement = inputElements[index];
-                inputElement.$refs.input.focus();
+                inputElement.focus();
             });
         }
     },
-
-    mounted() {
-    }
 }
 </script>
 
 <style scoped>
+.el-row {
+    margin: 0.6rem;
+}
+
+.task {
+    display: flex;
+    gap: 0.4rem;
+    align-items: start;
+}
+
+.taskDetail {
+    flex-grow: 1;
+}
+
+.inputAndSettings {
+    display: flex;
+    flex-direction: column;
+}
+
+.settingIcon {
+    border: none;
+    padding: 0 0;
+    background: none;
+}
+
 .add-list-button {
     border: none;
+    padding: 1rem 1.5rem;
+    font-size: 62.5%;
+    color: #000;
 }
 
 .add-list-button:hover,

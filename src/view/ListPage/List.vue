@@ -42,6 +42,12 @@ export default {
 }
 
 .list-title {
+    font-weight: bold;
+    color: #cf711f;
+    font-size: 1.4rem;
+}
 
+.list-details {
+    margin: 0.8rem 0;
 }
 </style>
