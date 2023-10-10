@@ -39,6 +39,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'ListItem',
 
@@ -62,7 +63,7 @@ export default {
                 const inputElements = this.$refs.taskInputs
                 const lastIndex = inputElements.length - 1
                 const lastInputElement = inputElements[lastIndex]
-                lastInputElement.focus();
+                lastInputElement.$refs.input.focus();
             })
         },
         inputBlur(task, index) {
@@ -79,7 +80,7 @@ export default {
             this.$nextTick(() => {
                 const inputElement = this.$refs.taskInputs;
                 // const inputElement = inputElements[index];
-                inputElement.focus();
+                inputElement.$refs.input.focus();
             });
         }
     },

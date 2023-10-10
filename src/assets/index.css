@@ -113,3 +113,18 @@
 .el-tooltip__popper[x-placement^=bottom] .popper__arrow {
     border-bottom-color:  #fdf2e9;
 }
+
+.el-tag {
+    border-color: #e67e22;
+    background-color: #fdf2e9;
+    color: #cf711f;
+}
+
+.el-tag .el-tag__close {
+    color: #cf711f;
+}
+
+.el-tag .el-tag__close:hover {
+    background-color: #fdf2e9;
+    color: #cf711f;
+}

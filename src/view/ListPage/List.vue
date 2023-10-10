@@ -1,6 +1,7 @@
 <template>
   <el-container>
       <el-main class="section-main">
+<!--          TODO 加过滤，如用标签过滤-->
         <div class="container grid">
             <el-card class="card">
                 <div class="list-title">TO DO</div>
@@ -10,7 +11,7 @@
             </el-card>
 
             <el-card class="card">
-
+                <tag-item></tag-item>
             </el-card>
 
             <el-card class="card">
@@ -24,10 +25,11 @@
 <script>
 
 import ListItem from "@/view/ListPage/Components/ListItem.vue";
+import TagItem from "@/view/ListPage/Components/TaglItem.vue";
 
 export default {
     name: 'List',
-    components: {ListItem},
+    components: {TagItem, ListItem},
 
 }
 </script>
