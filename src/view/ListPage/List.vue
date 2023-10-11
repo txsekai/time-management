@@ -11,7 +11,6 @@
             </el-card>
 
             <el-card class="card">
-                <tag-item></tag-item>
             </el-card>
 
             <el-card class="card">
@@ -25,11 +24,10 @@
 <script>
 
 import ListItem from "@/view/ListPage/Components/ListItem.vue";
-import TagItem from "@/view/ListPage/Components/TaglItem.vue";
 
 export default {
     name: 'List',
-    components: {TagItem, ListItem},
+    components: {ListItem},
 
 }
 </script>

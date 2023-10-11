@@ -2,7 +2,12 @@
     <div>
         <el-row v-for="(task, index) in taskList" :key="index">
             <div class="task">
-                <input type="checkbox" v-model="task.complete"/>
+                <input style="margin: 0.2rem" type="checkbox" v-model="task.complete"/>
+                <!--添加事项 -> input(editing = true) -> 没有输入内容 (TODO hover到icon上tooltip展示不可点), 然后blur -> editing = false，并删除这行
+                                                        输入内容 hover到icon上展示tooltip，然后点击icon时候(blur),展示tag-item，选/不选tag  ？？ -> 这行变为<div>
+
+                                                                                        点击icon弹dialog，并且input blur变为<div> -> 选/不选tag
+                -->
                 <div class="taskDetail">
                     <template v-if="!task.editing">
                         <div @click="startEditing(task)">{{ task.content }}</div>
@@ -12,7 +17,8 @@
                             <el-input v-model="task.content" ref="taskInputs" @blur="inputBlur(task, index)"></el-input>
                             <el-row style="display: flex">
                                 <el-tooltip content="标签" placement="bottom-start">
-                                    <el-button class="settingIcon" icon="el-icon-discount"></el-button>
+                                    <el-button class="settingIcon" icon="el-icon-discount"
+                                               @click="handleTag"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="日期" placement="bottom-start">
                                     <el-button class="settingIcon" icon="el-icon-date"></el-button>
@@ -27,6 +33,7 @@
                                     <el-button class="settingIcon" icon="el-icon-star-on"></el-button>
                                 </el-tooltip>
                             </el-row>
+                            <tag-item :dialogVisible="dialogVisible"></tag-item>
                         </div>
                     </template>
                 </div>
@@ -40,12 +47,16 @@
 
 <script>
 
+import TagItem from "@/view/ListPage/Components/TagItem.vue";
+
 export default {
     name: 'ListItem',
+    components: {TagItem},
 
     data() {
         return {
             taskList: [],
+            dialogVisible: false
         }
     },
 
@@ -76,13 +87,22 @@ export default {
         },
         startEditing(task) {
             task.editing = true
-            // TODO 光标编辑时候focus
+            // TODO 光标编辑时候focus  先不要focus
             this.$nextTick(() => {
                 const inputElement = this.$refs.taskInputs;
                 // const inputElement = inputElements[index];
                 inputElement.$refs.input.focus();
             });
-        }
+
+            this.dialogVisible = false
+        },
+        handleTag() {
+            // TODO
+            //  1. 在关闭dialog后，变为content
+            // 2. 定义openDialog的方法
+            debugger
+            this.dialogVisible = true
+        },
     },
 }
 </script>
