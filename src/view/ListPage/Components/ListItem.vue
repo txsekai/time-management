@@ -12,6 +12,7 @@
                 <div class="taskDetail">
                     <template v-if="!task.editing">
                         <div @click="startEditing(task)">{{ task.content }}</div>
+                        <el-row>{{ receiveSelectedTags }}</el-row>
                     </template>
                     <template v-else>
                         <div class="inputAndSettings">
@@ -19,7 +20,7 @@
                             <el-row style="display: flex">
                                 <el-tooltip content="标签" placement="bottom-start">
                                     <el-button class="settingIcon" icon="el-icon-discount"
-                                               @click="handleTag"></el-button>
+                                               @click="openTagDialog()"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="日期" placement="bottom-start">
                                     <el-button class="settingIcon" icon="el-icon-date"></el-button>
@@ -43,7 +44,7 @@
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
-        <tag-item :dialogVisible="dialogVisible"></tag-item>
+        <tag-item :dialogVisible="dialogVisible" @sendSelectedTags="handleSendSelectedTags" ></tag-item>
     </div>
 </template>
 
@@ -58,7 +59,8 @@ export default {
     data() {
         return {
             taskList: [],
-            dialogVisible: false
+            dialogVisible: false,
+            receiveSelectedTags: null,
         }
     },
 
@@ -78,16 +80,19 @@ export default {
                 const lastInputElement = inputElements[lastIndex]
                 lastInputElement.$refs.input.focus();
             })
+            // TODO 为什么点这些地方会打开dialog？
+            this.dialogVisible = false
         },
         startEditing(task) {
             task.editing = true
-            // TODO 光标编辑时候focus  先不要focus
+            // TODO 光标编辑时候focus
             this.$nextTick(() => {
                 const inputElement = this.$refs.taskInputs;
                 // const inputElement = inputElements[index];
                 inputElement.$refs.input.focus();
             });
 
+            // TODO 为什么点这些地方会打开dialog？
             this.dialogVisible = false
         },
         inputBlur(task, index) {
@@ -100,11 +105,19 @@ export default {
                 }, 300)
             }
         },
-        handleTag() {
+        openTagDialog() {
             // TODO 定义共同openDialog的方法
-            debugger
+            // 每个task点击标签打开的是各自的tagItem，选择完之后，再把对应的标签放在自己的task下面
+
             this.dialogVisible = true
         },
+        handleSendSelectedTags(sendSelectedTags) {
+            if (sendSelectedTags.length !== 0) {
+                this.receiveSelectedTags = sendSelectedTags
+            }else {
+                this.receiveSelectedTags = null
+            }
+        }
     },
 }
 </script>
@@ -133,6 +146,7 @@ export default {
     border: none;
     padding: 0 0;
     background: none;
+    cursor: pointer;
 }
 
 .add-list-button {

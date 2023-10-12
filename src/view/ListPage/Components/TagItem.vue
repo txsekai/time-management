@@ -30,10 +30,7 @@
 
         <div class="dialog-footer">
             <!--            TODO 为什么input和button转化时，这两个按钮高度变更-->
-            <el-button
-                    @click="handleConfirm"
-            >确认
-            </el-button>
+            <el-button @click="handleConfirm">确认</el-button>
             <el-button @click="handleClose">取消</el-button>
         </div>
     </el-dialog>
@@ -47,7 +44,7 @@ export default {
         dialogVisible: {
             type: Boolean,
             default: false
-        }
+        },
     },
 
     data() {
@@ -57,6 +54,15 @@ export default {
             inputValue: '',
             selectedTags: [],
         }
+    },
+
+    watch: {
+        // TODO 控制台报错：Avoid mutating a prop directly since the value will be overwritten whenever the parent component re-renders.
+        //  Instead, use a data or computed property based on the prop's value. Prop being mutated: "dialogVisible"
+        // dialogVisible(val) {
+        //     debugger
+        //     this.modelState = val;
+        // }
     },
 
     computed: {
@@ -107,11 +113,16 @@ export default {
             })
         },
         handleConfirm() {
-            // TODO 把选择的标签给父组件
-
+            // TODO 把tags传递给各自的task
+            const sendSelectedTags = this.selectedTags
+            this.$emit('sendSelectedTags', sendSelectedTags)
+            // TODO button要点两次才关闭
             this.dialogVisible = false
         },
         handleClose() {
+            // TODO
+            // 选择点击确认，返回给父组件，再打开时，选择了的内容要选中
+            // 选择点击取消，不返回给父组件，再打开，没有选中
             this.dialogVisible = false
         },
     },
