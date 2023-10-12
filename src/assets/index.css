@@ -57,6 +57,7 @@
     border-color: #e67e22;
     background-color: #fdf2e9;
     color: #cf711f;
+    cursor: pointer;
 }
 
 .el-button:active {

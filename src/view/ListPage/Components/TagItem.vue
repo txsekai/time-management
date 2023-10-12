@@ -45,6 +45,12 @@ export default {
             type: Boolean,
             default: false
         },
+        receiveSelectedTags: {
+            type: Array,
+            default: function() {
+                return []
+            }
+        }
     },
 
     data() {
@@ -52,7 +58,7 @@ export default {
             dynamicTags: ['写作业', '工作', '整理笔记', '阅读', '运动', '弹吉他'],
             inputVisible: false,
             inputValue: '',
-            selectedTags: [],
+            selectedTags: this.receiveSelectedTags,
         }
     },
 
@@ -113,10 +119,11 @@ export default {
             })
         },
         handleConfirm() {
+            debugger
             // TODO 把tags传递给各自的task
             const sendSelectedTags = this.selectedTags
             this.$emit('sendSelectedTags', sendSelectedTags)
-            // TODO button要点两次才关闭
+            // TODO button要点两次才关闭,因为上面的emit没操作完？
             this.dialogVisible = false
         },
         handleClose() {

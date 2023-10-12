@@ -12,7 +12,7 @@
                 <div class="taskDetail">
                     <template v-if="!task.editing">
                         <div @click="startEditing(task)">{{ task.content }}</div>
-                        <el-row>{{ receiveSelectedTags }}</el-row>
+                        <el-row>{{ task.receiveSelectedTags }}</el-row>
                     </template>
                     <template v-else>
                         <div class="inputAndSettings">
@@ -20,7 +20,7 @@
                             <el-row style="display: flex">
                                 <el-tooltip content="标签" placement="bottom-start">
                                     <el-button class="settingIcon" icon="el-icon-discount"
-                                               @click="openTagDialog()"></el-button>
+                                               @click="openTagDialog(task)"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="日期" placement="bottom-start">
                                     <el-button class="settingIcon" icon="el-icon-date"></el-button>
@@ -44,7 +44,7 @@
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
-        <tag-item :dialogVisible="dialogVisible" @sendSelectedTags="handleSendSelectedTags" ></tag-item>
+        <tag-item :dialogVisible="dialogVisible" @sendSelectedTags="handleSendSelectedTags" :receiveSelectedTags="receiveSelectedTags"></tag-item>
     </div>
 </template>
 
@@ -60,7 +60,7 @@ export default {
         return {
             taskList: [],
             dialogVisible: false,
-            receiveSelectedTags: null,
+            receiveSelectedTags: []
         }
     },
 
@@ -69,7 +69,8 @@ export default {
             const newTask = {
                 complete: false,
                 content: '',
-                editing: true
+                editing: true,
+                receiveSelectedTags: null,
             }
 
             this.taskList.push(newTask);
@@ -105,17 +106,20 @@ export default {
                 }, 300)
             }
         },
-        openTagDialog() {
+        openTagDialog(task) {
             // TODO 定义共同openDialog的方法
             // 每个task点击标签打开的是各自的tagItem，选择完之后，再把对应的标签放在自己的task下面
-
+            debugger
             this.dialogVisible = true
+            this.receiveSelectedTags = task.receiveSelectedTags
         },
         handleSendSelectedTags(sendSelectedTags) {
+            debugger
+            // TODO 怎么找到对应的task
             if (sendSelectedTags.length !== 0) {
-                this.receiveSelectedTags = sendSelectedTags
+                this.taskList[0].receiveSelectedTags = sendSelectedTags
             }else {
-                this.receiveSelectedTags = null
+                this.taskList[0].receiveSelectedTags = null
             }
         }
     },
@@ -146,7 +150,6 @@ export default {
     border: none;
     padding: 0 0;
     background: none;
-    cursor: pointer;
 }
 
 .add-list-button {
