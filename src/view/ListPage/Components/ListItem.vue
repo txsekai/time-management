@@ -4,7 +4,8 @@
             <div class="task">
                 <input style="margin: 0.2rem" type="checkbox" v-model="task.complete"/>
                 <!--添加事项 -> input(editing = true) -> 没有输入内容 (TODO hover到icon上tooltip展示不可点), 然后blur -> editing = false，并删除这行
-                                                        输入内容 hover到icon上展示tooltip，然后点击icon时候(blur),展示tag-item，选/不选tag  ？？ -> 这行变为<div>
+                                                        输入内容 hover到icon上展示tooltip，然后点击icon时候(blur) -> 这行变为<div> && 展示tag-item dialog
+                                                        输入内容 不点击icon，blur -> 这行变为<div>
 
                                                                                         点击icon弹dialog，并且input blur变为<div> -> 选/不选tag
                 -->
@@ -33,7 +34,6 @@
                                     <el-button class="settingIcon" icon="el-icon-star-on"></el-button>
                                 </el-tooltip>
                             </el-row>
-                            <tag-item :dialogVisible="dialogVisible"></tag-item>
                         </div>
                     </template>
                 </div>
@@ -42,6 +42,8 @@
 
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
+
+        <tag-item :dialogVisible="dialogVisible"></tag-item>
     </div>
 </template>
 
@@ -77,14 +79,6 @@ export default {
                 lastInputElement.$refs.input.focus();
             })
         },
-        inputBlur(task, index) {
-            //     通过content是否为空，为空的话用index把这行取消；不为空的话，展示这行
-            if (task.content === '' || task.content === undefined) {
-                this.taskList.splice(index, 1)
-            } else {
-                task.editing = false
-            }
-        },
         startEditing(task) {
             task.editing = true
             // TODO 光标编辑时候focus  先不要focus
@@ -96,10 +90,18 @@ export default {
 
             this.dialogVisible = false
         },
+        inputBlur(task, index) {
+            //     通过content是否为空，为空的话用index把这行取消；不为空的话，展示这行
+            if (task.content === '' || task.content === undefined) {
+                this.taskList.splice(index, 1)
+            } else {
+                setTimeout(() => {
+                    task.editing = false
+                }, 300)
+            }
+        },
         handleTag() {
-            // TODO
-            //  1. 在关闭dialog后，变为content
-            // 2. 定义openDialog的方法
+            // TODO 定义共同openDialog的方法
             debugger
             this.dialogVisible = true
         },
