@@ -61,7 +61,7 @@
 import TagItem from "@/view/ListPage/Components/TagItem.vue";
 
 export default {
-    name: 'ListItem',
+    name: 'TaskList',
     components: {TagItem},
 
     data() {

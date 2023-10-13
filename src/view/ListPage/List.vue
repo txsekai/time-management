@@ -6,7 +6,7 @@
             <el-card class="card">
                 <div class="list-title">TO DO</div>
                 <div class="list-details">
-                    <list-item />
+                    <task-list />
                 </div>
             </el-card>
 
@@ -23,11 +23,11 @@
 
 <script>
 
-import ListItem from "@/view/ListPage/Components/ListItem.vue";
+import TaskList from "@/view/ListPage/Components/TaskList.vue";
 
 export default {
     name: 'List',
-    components: {ListItem},
+    components: {TaskList},
 
 }
 </script>
