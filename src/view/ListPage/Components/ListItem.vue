@@ -12,7 +12,7 @@
                 <div class="taskDetail">
                     <template v-if="!task.editing">
                         <div @click="startEditing(task)">{{ task.content }}</div>
-                        <el-row>{{ task.receiveSelectedTags }}</el-row>
+                        <el-row>{{ task.tags }}</el-row>
                     </template>
                     <template v-else>
                         <div class="inputAndSettings">
@@ -44,7 +44,7 @@
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
-        <tag-item :dialogVisible="dialogVisible" @sendSelectedTags="handleSendSelectedTags" :receiveSelectedTags="receiveSelectedTags"></tag-item>
+        <tag-item :dialogVisible="dialogVisible" :task="currentTask" @confirm="dialogVisible=false"></tag-item>
     </div>
 </template>
 
@@ -60,7 +60,7 @@ export default {
         return {
             taskList: [],
             dialogVisible: false,
-            receiveSelectedTags: []
+            currentTask:  {tags:[]}
         }
     },
 
@@ -70,7 +70,7 @@ export default {
                 complete: false,
                 content: '',
                 editing: true,
-                receiveSelectedTags: null,
+                tags: [],
             }
 
             this.taskList.push(newTask);
@@ -81,8 +81,6 @@ export default {
                 const lastInputElement = inputElements[lastIndex]
                 lastInputElement.$refs.input.focus();
             })
-            // TODO 为什么点这些地方会打开dialog？
-            this.dialogVisible = false
         },
         startEditing(task) {
             task.editing = true
@@ -92,9 +90,6 @@ export default {
                 // const inputElement = inputElements[index];
                 inputElement.$refs.input.focus();
             });
-
-            // TODO 为什么点这些地方会打开dialog？
-            this.dialogVisible = false
         },
         inputBlur(task, index) {
             //     通过content是否为空，为空的话用index把这行取消；不为空的话，展示这行
@@ -108,20 +103,9 @@ export default {
         },
         openTagDialog(task) {
             // TODO 定义共同openDialog的方法
-            // 每个task点击标签打开的是各自的tagItem，选择完之后，再把对应的标签放在自己的task下面
-            debugger
+            this.currentTask = task;
             this.dialogVisible = true
-            this.receiveSelectedTags = task.receiveSelectedTags
         },
-        handleSendSelectedTags(sendSelectedTags) {
-            debugger
-            // TODO 怎么找到对应的task
-            if (sendSelectedTags.length !== 0) {
-                this.taskList[0].receiveSelectedTags = sendSelectedTags
-            }else {
-                this.taskList[0].receiveSelectedTags = null
-            }
-        }
     },
 }
 </script>

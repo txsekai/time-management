@@ -45,35 +45,25 @@ export default {
             type: Boolean,
             default: false
         },
-        receiveSelectedTags: {
-            type: Array,
+        task: {
+            type: Object,
             default: function() {
-                return []
+                return {tags:[]}
             }
         }
     },
-
     data() {
         return {
             dynamicTags: ['写作业', '工作', '整理笔记', '阅读', '运动', '弹吉他'],
             inputVisible: false,
             inputValue: '',
-            selectedTags: this.receiveSelectedTags,
+            
         }
-    },
-
-    watch: {
-        // TODO 控制台报错：Avoid mutating a prop directly since the value will be overwritten whenever the parent component re-renders.
-        //  Instead, use a data or computed property based on the prop's value. Prop being mutated: "dialogVisible"
-        // dialogVisible(val) {
-        //     debugger
-        //     this.modelState = val;
-        // }
     },
 
     computed: {
         isSelected() {
-            return tag => this.selectedTags.includes(tag)
+            return tag => this.task.tags.includes(tag)
         },
     },
 
@@ -89,12 +79,12 @@ export default {
             }
         },
         selectTag(tag) {
-            this.selectedTags.push(tag);
+            this.task.tags.push(tag);
         },
         deselectTag(tag) {
-            const index = this.selectedTags.indexOf(tag)
+            const index = this.task.tags.indexOf(tag)
             if (index !== -1) {
-                this.selectedTags.splice(index, 1)
+                this.task.tags.splice(index, 1)
             }
         },
         handleInputConfirm() {
@@ -119,18 +109,9 @@ export default {
             })
         },
         handleConfirm() {
-            debugger
-            // TODO 把tags传递给各自的task
-            const sendSelectedTags = this.selectedTags
-            this.$emit('sendSelectedTags', sendSelectedTags)
-            // TODO button要点两次才关闭,因为上面的emit没操作完？
-            this.dialogVisible = false
+            this.$emit("confirm")
         },
         handleClose() {
-            // TODO
-            // 选择点击确认，返回给父组件，再打开时，选择了的内容要选中
-            // 选择点击取消，不返回给父组件，再打开，没有选中
-            this.dialogVisible = false
         },
     },
 }
