@@ -57,7 +57,6 @@ export default {
             dynamicTags: ['写作业', '工作', '整理笔记', '阅读', '运动', '弹吉他'],
             inputVisible: false,
             inputValue: '',
-            
         }
     },
 
@@ -79,7 +78,9 @@ export default {
             }
         },
         selectTag(tag) {
-            this.task.tags.push(tag);
+            if(!this.task.tags.includes(tag)){
+                this.task.tags.push(tag);
+            }
         },
         deselectTag(tag) {
             const index = this.task.tags.indexOf(tag)
@@ -112,6 +113,7 @@ export default {
             this.$emit("confirm")
         },
         handleClose() {
+            this.$emit("cancel")
         },
     },
 }
