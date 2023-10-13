@@ -12,12 +12,19 @@
                 <div class="taskDetail">
                     <template v-if="!task.editing">
                         <div @click="startEditing(task)">{{ task.content }}</div>
-                        <el-row>{{ task.tags }}</el-row>
+                        <el-row class="tag-row">
+                            <el-tag class="tag-group"
+                                    v-for="tag in task.tags"
+                                    :key="tag"
+                            >{{ tag }}
+                            </el-tag>
+                        </el-row>
                     </template>
                     <template v-else>
                         <div class="inputAndSettings">
-                            <el-input id="contentId" v-model="task.content" ref="taskInputs" @blur="inputBlur(task, index)"></el-input>
-                            <el-row style="display: flex">
+                            <el-input id="contentId" v-model="task.content" ref="taskInputs"
+                                      @blur="inputBlur(task, index)" @keyup.native="handleShowSettings(task)"></el-input>
+                            <el-row v-if="showSettings" style="display: flex">
                                 <el-tooltip content="标签" placement="bottom-start">
                                     <el-button class="settingIcon" icon="el-icon-discount"
                                                @click="openTagDialog(task)"></el-button>
@@ -43,7 +50,9 @@
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
-        <tag-item :dialogVisible="dialogVisible" :task="currentTask" @confirm="dialogVisible=false" @cancel="dialogVisible=false;currentTask.tags = tagsBk"></tag-item>
+        <tag-item :dialogVisible="dialogVisible" :task="currentTask" @confirm="dialogVisible=false"
+                  @cancel="dialogVisible=false;currentTask.tags=tagsBk"
+                  :tags-bk="tagsBk"></tag-item>
     </div>
 </template>
 
@@ -59,8 +68,9 @@ export default {
         return {
             taskList: [],
             dialogVisible: false,
-            currentTask:  {tags:[]},
+            currentTask: {tags: []},
             tagsBk: [],
+            showSettings: false,
         }
     },
 
@@ -97,10 +107,17 @@ export default {
                 }, 300)
             }
         },
+        handleShowSettings(task) {
+            if(task.content.length !== 0) {
+                this.showSettings = true
+            }else {
+                this.showSettings = false
+            }
+        },
         openTagDialog(task) {
             // TODO 定义共同openDialog的方法
             this.currentTask = task;
-            this.tagsBk = Object.assign([],task.tags);
+            this.tagsBk = Object.assign([], task.tags);
             this.dialogVisible = true
         },
     },
@@ -133,9 +150,20 @@ export default {
     background: none;
 }
 
+.tag-row {
+    margin: 0.6rem 0;
+}
+
+.tag-group {
+    margin-left: 0.3rem;
+    margin-bottom: 0.5rem;
+    height: 2rem;
+    line-height: 2rem;
+}
+
 .add-list-button {
     border: none;
-    padding: 1rem 1.5rem;
+    padding: 0.5rem 1rem;
     font-size: 62.5%;
     color: #000;
 }

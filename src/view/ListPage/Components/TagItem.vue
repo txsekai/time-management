@@ -4,6 +4,9 @@
             :visible.sync="dialogVisible"
             width="30%"
             center
+            :show-close="false"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
     >
         <el-row>
             <el-tag
@@ -50,6 +53,12 @@ export default {
             default: function() {
                 return {tags:[]}
             }
+        },
+        tagsBk: {
+            type: Array,
+            default: function (){
+                return []
+            }
         }
     },
     data() {
@@ -68,7 +77,23 @@ export default {
 
     methods: {
         handleCloseTag(tag) {
-            this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+            this.$confirm("确认要删除标签吗？", "确认", {
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                type: "warning"
+            }).then(() => {
+                this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+                if(this.task.tags.includes(tag)) {
+                    this.deselectTag(tag)
+                }
+
+                if(this.tagsBk.includes(tag)) {
+                    const index = this.tagsBk.indexOf(tag)
+                    if (index !== -1) {
+                        this.tagsBk.splice(index, 1)
+                    }
+                }
+            })
         },
         handleSelectOrCancelTag(tag) {
             if (this.isSelected(tag)) {
@@ -113,6 +138,8 @@ export default {
             this.$emit("confirm")
         },
         handleClose() {
+            // 选中确认 -> 删除 -> 取消
+
             this.$emit("cancel")
         },
     },
