@@ -16,7 +16,7 @@
                     </template>
                     <template v-else>
                         <div class="inputAndSettings">
-                            <el-input id="inputId" v-model="task.content" ref="taskInputs" @blur="inputBlur(task, index)"></el-input>
+                            <el-input id="contentId" v-model="task.content" ref="taskInputs" @blur="inputBlur(task, index)"></el-input>
                             <el-row style="display: flex">
                                 <el-tooltip content="标签" placement="bottom-start">
                                     <el-button class="settingIcon" icon="el-icon-discount"
@@ -85,11 +85,10 @@ export default {
         startEditing(task) {
             task.editing = true
             this.$nextTick(() => {
-                document.getElementById('inputId').focus()
+                document.getElementById('contentId').focus()
             });
         },
         inputBlur(task, index) {
-            //     通过content是否为空，为空的话用index把这行取消；不为空的话，展示这行
             if (task.content === '' || task.content === undefined) {
                 this.taskList.splice(index, 1)
             } else {
