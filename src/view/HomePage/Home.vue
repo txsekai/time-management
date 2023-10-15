@@ -38,7 +38,7 @@
 
 <!--                TODO 日历待办事项联动-->
                 <el-card class="card calendar-card">
-                    <div class="calendarFlex">
+                    <div class="calendar-flex">
                         <el-calendar class="calendar-item" v-model="calendarDate">
 
                         </el-calendar>
@@ -227,7 +227,7 @@ export default {
     grid-column: 1 / -1;
 }
 
-.calendarFlex {
+.calendar-flex {
     display: flex;
     gap: 2.4rem;
 }

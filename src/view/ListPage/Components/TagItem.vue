@@ -1,7 +1,7 @@
 <template>
     <el-dialog
             title="请选择标签"
-            :visible.sync="dialogVisible"
+            :visible.sync="tagDialogVisible"
             width="30%"
             center
             :show-close="false"
@@ -31,10 +31,9 @@
             <el-button v-else class="button-new-tag" @click="showInput" size="small">+ 新标签</el-button>
         </el-row>
 
-        <div class="dialog-footer">
-            <!--            TODO 为什么input和button转化时，这两个按钮高度变更-->
-            <el-button @click="handleConfirm">确认</el-button>
-            <el-button @click="handleClose">取消</el-button>
+        <div slot="footer" class="dialog-footer">
+            <el-button class="buttonPadding" @click="handleConfirm">确认</el-button>
+            <el-button class="buttonPadding" @click="handleClose">取消</el-button>
         </div>
     </el-dialog>
 </template>
@@ -44,7 +43,7 @@ export default {
     name: 'TagItem',
 
     props: {
-        dialogVisible: {
+        tagDialogVisible: {
             type: Boolean,
             default: false
         },
@@ -138,8 +137,6 @@ export default {
             this.$emit("confirm")
         },
         handleClose() {
-            // 选中确认 -> 删除 -> 取消
-
             this.$emit("cancel")
         },
     },
@@ -147,6 +144,10 @@ export default {
 </script>
 
 <style scoped>
+/deep/ .el-button {
+    font-size: 62.5%;
+}
+
 .el-tag {
     margin-left: 1rem;
     margin-bottom: 1rem;

@@ -9,7 +9,7 @@
 
                                                                                         点击icon弹dialog，并且input blur变为<div> -> 选/不选tag
                 -->
-                <div class="taskDetail">
+                <div class="task-detail">
                     <template v-if="!task.editing">
                         <div @click="startEditing(task)">{{ task.content }}</div>
                         <el-row class="tag-row">
@@ -21,25 +21,27 @@
                         </el-row>
                     </template>
                     <template v-else>
-                        <div class="inputAndSettings">
+                        <div class="input-and-settings">
                             <el-input id="contentId" v-model="task.content" ref="taskInputs"
-                                      @blur="inputBlur(task, index)" @keyup.native="handleShowSettings(task)"></el-input>
+                                      @blur="inputBlur(task, index)"
+                                      @keyup.native="handleShowSettings(task)"></el-input>
                             <el-row v-if="showSettings" style="display: flex">
                                 <el-tooltip content="标签" placement="bottom-start">
-                                    <el-button class="settingIcon" icon="el-icon-discount"
+                                    <el-button class="setting-icon" icon="el-icon-discount"
                                                @click="openTagDialog(task)"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="日期" placement="bottom-start">
-                                    <el-button class="settingIcon" icon="el-icon-date"></el-button>
+                                    <el-button class="setting-icon" icon="el-icon-date"
+                                               @click="openDateDialog"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="时间" placement="bottom-start">
-                                    <el-button class="settingIcon" icon="el-icon-time"></el-button>
+                                    <el-button class="setting-icon" icon="el-icon-time"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="重复" placement="bottom-start">
-                                    <el-button class="settingIcon" icon="el-icon-refresh"></el-button>
+                                    <el-button class="setting-icon" icon="el-icon-refresh"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="优先级" placement="bottom-start">
-                                    <el-button class="settingIcon" icon="el-icon-star-on"></el-button>
+                                    <el-button class="setting-icon" icon="el-icon-star-on"></el-button>
                                 </el-tooltip>
                             </el-row>
                         </div>
@@ -50,27 +52,32 @@
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
-        <tag-item :dialogVisible="dialogVisible" :task="currentTask" @confirm="dialogVisible=false"
-                  @cancel="dialogVisible=false;currentTask.tags=tagsBk"
+        <tag-item :tag-dialog-visible="tagDialogVisible" :task="currentTask" @confirm="tagDialogVisible=false"
+                  @cancel="tagDialogVisible=false;currentTask.tags=tagsBk"
                   :tags-bk="tagsBk"></tag-item>
+
+        <date-item :date-dialog-visible="dateDialogVisible" @confirm="dateDialogVisible=false"
+                   @cancel="dateDialogVisible=false"></date-item>
     </div>
 </template>
 
 <script>
 
 import TagItem from "@/view/ListPage/Components/TagItem.vue";
+import DateItem from "@/view/ListPage/Components/DateItem.vue";
 
 export default {
     name: 'TaskList',
-    components: {TagItem},
+    components: {DateItem, TagItem},
 
     data() {
         return {
             taskList: [],
-            dialogVisible: false,
+            tagDialogVisible: false,
             currentTask: {tags: []},
             tagsBk: [],
             showSettings: false,
+            dateDialogVisible: false,
         }
     },
 
@@ -108,9 +115,9 @@ export default {
             }
         },
         handleShowSettings(task) {
-            if(task.content.length !== 0) {
+            if (task.content.length !== 0) {
                 this.showSettings = true
-            }else {
+            } else {
                 this.showSettings = false
             }
         },
@@ -118,7 +125,10 @@ export default {
             // TODO 定义共同openDialog的方法
             this.currentTask = task;
             this.tagsBk = Object.assign([], task.tags);
-            this.dialogVisible = true
+            this.tagDialogVisible = true
+        },
+        openDateDialog() {
+            this.dateDialogVisible = true
         },
     },
 }
@@ -135,16 +145,16 @@ export default {
     align-items: start;
 }
 
-.taskDetail {
+.task-detail {
     flex-grow: 1;
 }
 
-.inputAndSettings {
+.input-and-settings {
     display: flex;
     flex-direction: column;
 }
 
-.settingIcon {
+.setting-icon {
     border: none;
     padding: 0 0;
     background: none;

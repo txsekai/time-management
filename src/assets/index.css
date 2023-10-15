@@ -37,7 +37,8 @@
 .el-date-table td.available:hover,
 .el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell,
 .el-month-table td .cell:hover,
-.el-month-table td.current:not(.disabled) .cell{
+.el-month-table td.current:not(.disabled) .cell,
+.el-date-table td.today span{
     color: #cf711f;
 }
 
@@ -81,7 +82,7 @@
 
 /* 修改滚动条轨道的样式 */
 ::-webkit-scrollbar-track {
-    background-color: #fdf2e9; /* 设置滚动条轨道的背景颜色 */
+    /*background-color: #fdf2e9; !* 设置滚动条轨道的背景颜色 *!*/
 }
 
 /* 修改滚动条滑块的样式 */
@@ -128,4 +129,24 @@
 .el-tag .el-tag__close:hover {
     background-color: #fdf2e9;
     color: #cf711f;
+}
+
+.button-padding {
+    padding: 0.9rem 1.6rem;
+}
+
+.mt6 {
+    margin-top: 0.6rem;
+}
+
+.mt8 {
+    margin-top: 0.8rem;
+}
+
+.mt12 {
+    margin-top: 1.2rem;
+}
+
+.mt16 {
+    margin-top: 1.6rem;
 }
