@@ -15,7 +15,7 @@
         </el-button>
         <!--     TODO title从calendar所选的取    -->
         <el-dialog
-                title="请选择具体时间"
+                :title="timeDialogTitle"
                 width="30%"
                 center
                 :visible.sync="timeDialogVisible"
@@ -137,10 +137,22 @@ export default {
         }
     },
 
+    watch: {
+        dateValue(newValue) {
+            if(newValue) {
+                const formattedDate = this.formatDate(newValue)
+                this.timeDialogTitle = formattedDate
+            }else {
+                this.timeDialogTitle = '请选择具体时间'
+            }
+        }
+    },
+
     data() {
         return {
             dateValue: new Date(),
             timeDialogVisible: false,
+            timeDialogTitle: '请选择具体时间',
             startHour: '',
             startMinute: '',
             hours: [],
@@ -172,6 +184,18 @@ export default {
     },
 
     methods: {
+        formatDate(date) {
+            const year = date.getFullYear()
+            const month = date.getMonth() + 1
+            const day = date.getDate()
+            const weekDay = this.getWeekDay(date.getDay())
+
+            return `${year}年${month}月${day}日 ${weekDay}`
+        },
+        getWeekDay(day) {
+          const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+            return weekDays[day]
+        },
         handleConfirm() {
             this.$emit("confirm")
         },
