@@ -76,7 +76,8 @@
 }
 
 /* 修改滚动条的样式 */
-::-webkit-scrollbar {
+::-webkit-scrollbar,
+.el-scrollbar__bar.is-vertical{
     width: 0.4rem; /* 设置滚动条宽度 */
 }
 
@@ -86,13 +87,15 @@
 }
 
 /* 修改滚动条滑块的样式 */
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb,
+.el-scrollbar__thumb{
     background-color: #f3cba7; /* 设置滚动条滑块的背景颜色 */
     border-radius: 7rem;
 }
 
 /* 修改滚动条滑块悬停时的样式 */
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover,
+.el-scrollbar__thumb:hover {
     background-color: #f8b983; /* 设置滚动条滑块悬停时的背景颜色 */
 }
 
@@ -135,6 +138,10 @@
     padding: 0.9rem 1.6rem;
 }
 
+.mt3 {
+    margin-top: 0.3rem;
+}
+
 .mt6 {
     margin-top: 0.6rem;
 }
@@ -149,4 +156,17 @@
 
 .mt16 {
     margin-top: 1.6rem;
+}
+
+.el-range-editor.is-active, .el-range-editor.is-active:hover, .el-select .el-input.is-focus .el-input__inner,
+.el-select .el-input__inner:focus{
+    border-color: #cf711f;
+}
+
+.el-select-dropdown__item.selected {
+    color: #cf711f;
+}
+
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
+    background-color: #fdf2e9;
 }
