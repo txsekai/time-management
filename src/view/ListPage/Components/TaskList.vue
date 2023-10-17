@@ -21,7 +21,7 @@
                         </el-row>
 <!--                        TODO 日期时间可以删除-->
                         <el-row>
-                            <span>{{ dateAndTime }}</span>
+                            <span>{{ task.dateAndTime }}</span>
                         </el-row>
                     </template>
                     <template v-else>
@@ -36,7 +36,7 @@
                                 </el-tooltip>
                                 <el-tooltip content="日期" placement="bottom-start">
                                     <el-button class="setting-icon" icon="el-icon-date"
-                                               @click="openDateDialog"></el-button>
+                                               @click="openDateDialog(task)"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="时间" placement="bottom-start">
                                     <el-button class="setting-icon" icon="el-icon-time"></el-button>
@@ -60,7 +60,7 @@
                   @tagCancel="tagDialogVisible=false;currentTask.tags=tagsBk"
                   :tags-bk="tagsBk"></tag-item>
 
-        <date-item :date-dialog-visible="dateDialogVisible" @dateConfirm="handleDateConfirm"
+        <date-item :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible = false"
                    @dateCancel="dateDialogVisible=false"></date-item>
     </div>
 </template>
@@ -82,7 +82,6 @@ export default {
             tagsBk: [],
             showSettings: false,
             dateDialogVisible: false,
-            dateAndTime: '',
         }
     },
 
@@ -93,6 +92,7 @@ export default {
                 content: '',
                 editing: true,
                 tags: [],
+                dateAndTime: ""
             }
 
             this.taskList.push(newTask);
@@ -132,13 +132,11 @@ export default {
             this.tagsBk = Object.assign([], task.tags);
             this.tagDialogVisible = true
         },
-        openDateDialog() {
+        openDateDialog(task) {
+            debugger
             this.dateDialogVisible = true
+            this.currentTask = task
         },
-        handleDateConfirm(dateValue) {
-            this.dateAndTime = dateValue
-            this.dateDialogVisible = false
-        }
     },
 }
 </script>
