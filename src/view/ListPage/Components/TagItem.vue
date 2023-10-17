@@ -134,10 +134,10 @@ export default {
             })
         },
         handleConfirm() {
-            this.$emit("confirm")
+            this.$emit("tagConfirm")
         },
         handleClose() {
-            this.$emit("cancel")
+            this.$emit("tagCancel")
         },
     },
 }

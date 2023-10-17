@@ -19,6 +19,10 @@
                             >{{ tag }}
                             </el-tag>
                         </el-row>
+<!--                        TODO 日期时间可以删除-->
+                        <el-row>
+                            <span>{{ dateAndTime }}</span>
+                        </el-row>
                     </template>
                     <template v-else>
                         <div class="input-and-settings">
@@ -52,12 +56,12 @@
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
-        <tag-item :tag-dialog-visible="tagDialogVisible" :task="currentTask" @confirm="tagDialogVisible=false"
-                  @cancel="tagDialogVisible=false;currentTask.tags=tagsBk"
+        <tag-item :tag-dialog-visible="tagDialogVisible" :task="currentTask" @tagConfirm="tagDialogVisible=false"
+                  @tagCancel="tagDialogVisible=false;currentTask.tags=tagsBk"
                   :tags-bk="tagsBk"></tag-item>
 
-        <date-item :date-dialog-visible="dateDialogVisible" @confirm="dateDialogVisible=false"
-                   @cancel="dateDialogVisible=false"></date-item>
+        <date-item :date-dialog-visible="dateDialogVisible" @dateConfirm="handleDateConfirm"
+                   @dateCancel="dateDialogVisible=false"></date-item>
     </div>
 </template>
 
@@ -78,6 +82,7 @@ export default {
             tagsBk: [],
             showSettings: false,
             dateDialogVisible: false,
+            dateAndTime: '',
         }
     },
 
@@ -130,6 +135,10 @@ export default {
         openDateDialog() {
             this.dateDialogVisible = true
         },
+        handleDateConfirm(dateValue) {
+            this.dateAndTime = dateValue
+            this.dateDialogVisible = false
+        }
     },
 }
 </script>

@@ -11,9 +11,7 @@
         <el-calendar
                 v-model="dateValue"
         ></el-calendar>
-        <el-button class="open-time-dialog-button button-padding" @click="timeDialogVisible=true">选择具体时间
-        </el-button>
-        <!--     TODO title从calendar所选的取    -->
+        <el-button class="open-time-dialog-button button-padding" @click="timeDialogVisible=true">计划时间</el-button>
         <el-dialog
                 :title="timeDialogTitle"
                 width="30%"
@@ -43,7 +41,8 @@
             <el-row class="mt3">
                 <el-col :span="6">
                     <div class="time-select">
-                        <el-select v-model="startHour">
+<!--                        TODO 不选择时间button，自定义完成时间，要算出所用时长-->
+                        <el-select v-model="startHour" @change="handleChangeTime">
                             <el-option
                                     v-for="hour in hours"
                                     :key="hour"
@@ -52,7 +51,7 @@
                             ></el-option>
                         </el-select>
                         <span> : </span>
-                        <el-select v-model="startMinute">
+                        <el-select v-model="startMinute" @change="handleChangeTime">
                             <el-option
                                     v-for="minute in minutes"
                                     :key="minute"
@@ -67,7 +66,7 @@
 
                 <el-col :span="6" v-show="completedVisible">
                     <div class="time-select">
-                        <el-select v-model="completedHour">
+                        <el-select v-model="completedHour" @change="handleChangeTime">
                             <el-option
                                     v-for="hour in hours"
                                     :key="hour"
@@ -76,7 +75,7 @@
                             ></el-option>
                         </el-select>
                         <span> : </span>
-                        <el-select v-model="completedMinute">
+                        <el-select v-model="completedMinute" @change="handleChangeTime">
                             <el-option
                                     v-for="minute in minutes"
                                     :key="minute"
@@ -89,7 +88,7 @@
             </el-row>
 
             <el-row class="mt16">
-                <el-col :span="12" style="min-height: 1rem">
+                <el-col :span="24" style="min-height: 1rem">
                     <span class="content-font-size" v-show="completedVisible">所用时长：{{ spendTime }}</span>
                 </el-col>
             </el-row>
@@ -115,13 +114,13 @@
             </div>
 
             <div slot="footer" class="dialog-footer">
-                <el-button class="button-padding" @click="timeDialogVisible=false">确认</el-button>
-                <el-button class="button-padding" @click="timeDialogVisible=false">取消</el-button>
+                <el-button class="button-padding" @click="handleTimeConfirm">确认</el-button>
+                <el-button class="button-padding" @click="handleTimeCancel">取消</el-button>
             </div>
         </el-dialog>
         <div slot="footer" class="dialog-footer">
-            <el-button class="button-padding" @click="handleConfirm">确认</el-button>
-            <el-button class="button-padding" @click="handleClose">取消</el-button>
+            <el-button class="button-padding" @click="handleDateConfirm">确认</el-button>
+            <el-button class="button-padding" @click="handleDateCancel">取消</el-button>
         </div>
     </el-dialog>
 </template>
@@ -137,22 +136,10 @@ export default {
         }
     },
 
-    watch: {
-        dateValue(newValue) {
-            if(newValue) {
-                const formattedDate = this.formatDate(newValue)
-                this.timeDialogTitle = formattedDate
-            }else {
-                this.timeDialogTitle = '请选择具体时间'
-            }
-        }
-    },
-
     data() {
         return {
             dateValue: new Date(),
             timeDialogVisible: false,
-            timeDialogTitle: '请选择具体时间',
             startHour: '',
             startMinute: '',
             hours: [],
@@ -183,24 +170,71 @@ export default {
         }
     },
 
+    computed: {
+        timeDialogTitle() {
+            if(this.dateValue) {
+                return this.formatDate(this.dateValue)
+            }else {
+                return '请选择具体时间'
+            }
+        }
+    },
+
     methods: {
         formatDate(date) {
+            const current = new Date()
+            const currentYear = current.getFullYear()
+            const currentMonth = current.getMonth() + 1
+            const currentDay = current.getDate()
+
             const year = date.getFullYear()
             const month = date.getMonth() + 1
             const day = date.getDate()
             const weekDay = this.getWeekDay(date.getDay())
 
-            return `${year}年${month}月${day}日 ${weekDay}`
+            if(currentYear === year && currentMonth === month && currentDay === day){
+                return '今天'
+            }else {
+                return `${year}/${month}/${day} ${weekDay}`
+            }
         },
         getWeekDay(day) {
-          const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+            const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
             return weekDays[day]
         },
-        handleConfirm() {
-            this.$emit("confirm")
+        handleDateConfirm() {
+            this.$emit("dateConfirm", this.formatDate(this.dateValue))
         },
-        handleClose() {
-            this.$emit("cancel")
+        handleDateCancel() {
+            this.$emit("dateCancel")
+        },
+        handleChangeTime() {
+            if(this.switchValue) {
+                this.$refs.defaultSelectTime.$el.classList.remove("defaultSelectTimeStyle")
+
+                const startHour = this.startHour
+                const startMinute = this.startMinute
+
+                const completedHour = this.completedHour
+                const completedMinute = this.completedMinute
+
+                const spendTimeHour = completedHour - startHour
+                const spendTimeMinute = completedMinute - startMinute
+                const spendTime = spendTimeHour * 60 + spendTimeMinute
+                if(spendTime < 0) {
+                    this.spendTime = ''
+                    this.$message('完成时间需大于开始时间')
+                }else {
+                    if(spendTime > 120) {
+                        const hour = Math.floor(spendTime / 60)
+                        const minute = spendTime % 60
+                        this.spendTime = hour.toString() + '小时' + minute.toString() + '分钟'
+                    }else {
+                        this.spendTime = spendTime.toString() + '分钟'
+                    }
+                }
+
+            }
         },
         handleSwitch() {
             if (this.switchValue) {
@@ -231,6 +265,13 @@ export default {
             const completedTime = new Date(startTime.getTime() + numericValue * 60000)  // 将分钟转换为毫秒
             this.completedHour = completedTime.getHours().toString().padStart(2, '0')
             this.completedMinute = completedTime.getMinutes().toString().padStart(2, '0')
+        },
+        handleTimeConfirm() {
+            this.timeDialogVisible = false
+            this.dateDialogVisible = false
+        },
+        handleTimeCancel() {
+            this.timeDialogVisible = false
         }
     },
 }
@@ -287,6 +328,7 @@ export default {
 
 /deep/ .el-input__icon {
     line-height: 2rem;
+    width: 2rem;
 }
 
 .el-select-dropdown__item {
