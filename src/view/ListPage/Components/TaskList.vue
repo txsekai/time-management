@@ -56,23 +56,22 @@
 
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
-        <tag-item :tag-dialog-visible="tagDialogVisible" :task="currentTask" @tagConfirm="tagDialogVisible=false"
+        <tag-dialog :tag-dialog-visible="tagDialogVisible" :task="currentTask" @tagConfirm="tagDialogVisible=false"
                   @tagCancel="tagDialogVisible=false;currentTask.tags=tagsBk"
-                  :tags-bk="tagsBk"></tag-item>
+                  :tags-bk="tagsBk"></tag-dialog>
 
-        <date-item :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible = false"
-                   @dateCancel="dateDialogVisible=false"></date-item>
+        <date-dialog :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible=false"
+                   @dateCancel="dateDialogVisible=false"></date-dialog>
     </div>
 </template>
 
 <script>
-
-import TagItem from "@/view/ListPage/Components/TagItem.vue";
-import DateItem from "@/view/ListPage/Components/DateItem.vue";
+import TagDialog from "@/view/ListPage/Components/TagDialog.vue";
+import DateDialog from "@/view/ListPage/Components/DateDialog.vue";
 
 export default {
     name: 'TaskList',
-    components: {DateItem, TagItem},
+    components: {DateDialog, TagDialog},
 
     data() {
         return {
@@ -92,7 +91,7 @@ export default {
                 content: '',
                 editing: true,
                 tags: [],
-                dateAndTime: ""
+                dateAndTime: null
             }
 
             this.taskList.push(newTask);
@@ -133,7 +132,6 @@ export default {
             this.tagDialogVisible = true
         },
         openDateDialog(task) {
-            debugger
             this.dateDialogVisible = true
             this.currentTask = task
         },

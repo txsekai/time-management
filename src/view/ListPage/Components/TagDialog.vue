@@ -40,7 +40,7 @@
 
 <script>
 export default {
-    name: 'TagItem',
+    name: 'TagDialog',
 
     props: {
         tagDialogVisible: {

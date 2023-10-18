@@ -9,11 +9,11 @@
             :close-on-press-escape="false"
     >
         <el-calendar
-                v-model="dateValue"
+                v-model="task.startDateTime"
         ></el-calendar>
         <el-button class="open-time-dialog-button button-padding" @click="timeDialogVisible=true">计划时间 {{ spendTime }}</el-button>
-        <time-item :time-dialog-visible="timeDialogVisible" :date-value="dateValue"
-                   @timeConfirm="handleTimeConfirm" @timeCancel="timeDialogVisible=false"></time-item>
+        <time-dialog :time-dialog-visible="timeDialogVisible" :date-value="dateValue"
+                   @timeConfirm="handleTimeConfirm" @timeCancel="timeDialogVisible=false"></time-dialog>
         <div slot="footer" class="dialog-footer">
             <el-button class="button-padding" @click="handleDateConfirm">确认</el-button>
             <el-button class="button-padding" @click="handleDateCancel">取消</el-button>
@@ -22,11 +22,11 @@
 </template>
 
 <script>
-import TimeItem from "@/view/ListPage/Components/TimeItem.vue";
+import TimeDialog from "@/view/ListPage/Components/TimeDialog.vue";
 
 export default {
-    name: "DateItem",
-    components: {TimeItem},
+    name: "DateDialog",
+    components: {TimeDialog},
 
     props: {
         dateDialogVisible: {
@@ -35,10 +35,15 @@ export default {
         },
         task: {
             type: Object,
-            default: function() {
-                return {dateAndTime:""}
-            }
+            required: true
         },
+    },
+    watch:{
+        task(){
+            if(this.task.startDateTime == null){
+                this.task.startDateTime = new Date();
+            }
+        }
     },
 
     data() {

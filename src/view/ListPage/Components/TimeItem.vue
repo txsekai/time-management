@@ -1,267 +1,84 @@
 <template>
-    <el-dialog
-            :title="timeDialogTitle"
-            width="30%"
-            center
-            :visible.sync="timeDialogVisible"
-            :show-close="false"
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            append-to-body
-    >
-        <el-row>
-<!--            TODO 加一个现在时间的button？-->
-            <el-col :span="12">
-                <span class="content-font-size">开始时间</span>
-            </el-col>
-
-            <el-col :span="12">
-                <span class="content-font-size">完成时间 </span>
-                <el-switch
-                        style="width: 3.6rem"
-                        v-model="switchValue"
-                        active-color="#cf711f"
-                        @change="handleSwitch"
-                ></el-switch>
-            </el-col>
-        </el-row>
-
-        <el-row class="mt3">
-            <el-col :span="6">
-                <div class="time-select">
-                    <el-select v-model="startHour" @change="handleChangeTime">
-                        <el-option
-                                v-for="hour in hours"
-                                :key="hour"
-                                :label="hour"
-                                :value="hour"
-                        ></el-option>
-                    </el-select>
-                    <span> : </span>
-                    <el-select v-model="startMinute" @change="handleChangeTime">
-                        <el-option
-                                v-for="minute in minutes"
-                                :key="minute"
-                                :label="minute"
-                                :value="minute"
-                        ></el-option>
-                    </el-select>
-                </div>
-            </el-col>
-
-            <el-col :span="6" style="min-height: 1rem"></el-col>
-
-            <el-col :span="6" v-show="completedVisible">
-                <div class="time-select">
-                    <el-select v-model="completedHour" @change="handleChangeTime">
-                        <el-option
-                                v-for="hour in hours"
-                                :key="hour"
-                                :label="hour"
-                                :value="hour"
-                        ></el-option>
-                    </el-select>
-                    <span> : </span>
-                    <el-select v-model="completedMinute" @change="handleChangeTime">
-                        <el-option
-                                v-for="minute in minutes"
-                                :key="minute"
-                                :label="minute"
-                                :value="minute"
-                        ></el-option>
-                    </el-select>
-                </div>
-            </el-col>
-        </el-row>
-
-        <el-row class="mt16">
-            <el-col :span="24" style="min-height: 1rem">
-                <span class="content-font-size" v-show="completedVisible">所用时长：{{ spendTime }}</span>
-            </el-col>
-        </el-row>
-
-        <div class="spend-time-grid mt16">
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime">10分钟
-            </el-button>
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime">15分钟
-            </el-button>
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime">20分钟
-            </el-button>
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime"
-                       ref="defaultSelectTime">30分钟
-            </el-button>
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime">40分钟
-            </el-button>
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime">60分钟
-            </el-button>
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime">90分钟
-            </el-button>
-            <el-button class="spend-time-padding" :disabled="completedStatus" @click="handleSpendTime">120分钟
-            </el-button>
-        </div>
-
-        <div slot="footer" class="dialog-footer">
-            <el-button class="button-padding" @click="handleTimeConfirm">确认</el-button>
-            <el-button class="button-padding" @click="handleTimeCancel">取消</el-button>
-        </div>
-    </el-dialog>
+    <div class="time-select">
+        <el-select v-model="time.hour" @change="handleChange">
+            <el-option
+                    v-for="hour in hours"
+                    :key="hour"
+                    :label="hour"
+                    :value="hour"
+            ></el-option>
+        </el-select>
+        <span> : </span>
+        <el-select v-model="time.minute" @change="handleChange">
+            <el-option
+                    v-for="minute in minutes"
+                    :key="minute"
+                    :label="minute"
+                    :value="minute"
+            ></el-option>
+        </el-select>
+    </div>
 </template>
 
 <script>
 export default {
-    name: 'TimeItem',
+    name: "TimeItem",
 
     props: {
-        timeDialogVisible: {
-            type: Boolean,
-            default: false
-        },
-        dateValue: {
+        value: {
             type: Date,
-            default: '请选择具体时间'
+            required: true
+        }
+    },
+
+    watch: {
+        value(val) {
+            this.stateValue = new Date(val.getTime());
+            this.time.hour = val.getHours().toString().padStart(2, '0');
+            this.time.minute = val.getMinutes().toString().padStart(2, '0');
         }
     },
 
     data() {
         return {
-            startHour: '',
-            startMinute: '',
+            time: {hour: 0, minute: 0},
+            stateValue: null,
             hours: [],
             minutes: [],
-            completedHour: '',
-            completedMinute: '',
-            spendTime: '',
-            switchValue: false,
-            completedStatus: true,
-            completedVisible: false,
         }
     },
 
     created() {
-        const startCurrentDateTime = new Date()
-        this.startHour = startCurrentDateTime.getHours().toString().padStart(2, '0')
+        this.initOptions()
+        this.stateValue = new Date(this.value.getTime());
+        this.time.hour = this.stateValue.getHours().toString().padStart(2, '0');
+        this.time.minute = this.stateValue.getMinutes().toString().padStart(2, '0');
 
-        for (let i = 0; i <= 23; i++) {
-            const hour = i.toString().padStart(2, '0')
-            this.hours.push(hour)
-        }
 
-        this.startMinute = startCurrentDateTime.getMinutes().toString().padStart(2, '0')
-
-        for (let i = 0; i <= 59; i++) {
-            const minute = i.toString().padStart(2, '0')
-            this.minutes.push(minute)
-        }
-    },
-
-    computed: {
-        timeDialogTitle() {
-            if(this.dateValue) {
-                return this.formatDate(this.dateValue)
-            }else {
-                return '请选择具体时间'
-            }
-        }
     },
 
     methods: {
-        formatDate(date) {
-            const current = new Date()
-            const currentYear = current.getFullYear()
-            const currentMonth = current.getMonth() + 1
-            const currentDay = current.getDate()
-
-            const year = date.getFullYear()
-            const month = date.getMonth() + 1
-            const day = date.getDate()
-            const weekDay = this.getWeekDay(date.getDay())
-
-            if(currentYear === year && currentMonth === month && currentDay === day){
-                return '今天'
-            }else {
-                return `${year}/${month}/${day} ${weekDay}`
-            }
-        },
-        getWeekDay(day) {
-            const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
-            return weekDays[day]
-        },
-        handleChangeTime() {
-            if(this.switchValue) {
-                this.$refs.defaultSelectTime.$el.classList.remove("defaultSelectTimeStyle")
-
-                const startHour = this.startHour
-                const startMinute = this.startMinute
-
-                const completedHour = this.completedHour
-                const completedMinute = this.completedMinute
-
-                const spendTimeHour = completedHour - startHour
-                const spendTimeMinute = completedMinute - startMinute
-                const spendTime = spendTimeHour * 60 + spendTimeMinute
-                if(spendTime < 0) {
-                    this.spendTime = ''
-                    this.$message('完成时间需大于开始时间')
-                }else {
-                    if(spendTime > 120) {
-                        const hour = Math.floor(spendTime / 60)
-                        const minute = spendTime % 60
-                        this.spendTime = hour.toString() + '小时' + minute.toString() + '分钟'
-                    }else {
-                        this.spendTime = spendTime.toString() + '分钟'
-                    }
-                }
-
-            }
-        },
-        handleSwitch() {
-            if (this.switchValue) {
-                this.completedVisible = true
-                this.completedStatus = false
-            } else {
-                this.completedVisible = false
-                this.completedStatus = true
+        initOptions(){
+            for (let i = 0; i <= 23; i++) {
+                const hour = i.toString().padStart(2, '0')
+                this.hours.push(hour)
             }
 
-            this.$nextTick(() => {
-                this.$refs.defaultSelectTime.$el.click()
-                this.$refs.defaultSelectTime.$el.classList.add("defaultSelectTimeStyle")
-            })
-        },
-        handleSpendTime(event) {
-            this.$refs.defaultSelectTime.$el.classList.remove("defaultSelectTimeStyle")
-
-            const buttonText = event.target.innerText
-            const numericValue = buttonText.slice(0, -2)
-            this.spendTime = buttonText
-
-            const startHour = this.startHour
-            const startMinute = this.startMinute
-            const startTime = new Date()
-            startTime.setHours(startHour)
-            startTime.setMinutes(startMinute)
-            const completedTime = new Date(startTime.getTime() + numericValue * 60000)  // 将分钟转换为毫秒
-            this.completedHour = completedTime.getHours().toString().padStart(2, '0')
-            this.completedMinute = completedTime.getMinutes().toString().padStart(2, '0')
-        },
-        handleTimeConfirm() {
-            let spendTime = ''
-            if(!this.switchValue) {
-                spendTime = this.startHour + " : " + this.startMinute
-            }else {
-                spendTime = this.startHour + " : " + this.startMinute + " ~ " + this.completedHour +  " : " + this.completedMinute
+            for (let i = 0; i <= 59; i++) {
+                const minute = i.toString().padStart(2, '0')
+                this.minutes.push(minute)
             }
-            this.$emit("timeConfirm", spendTime)
         },
-        handleTimeCancel() {
-            this.$emit("timeCancel")
-        }
-    },
+        handleChange() {
+            this.stateValue.setHours(this.time.hour)
+            this.stateValue.setMinutes(this.time.minute)
+            this.$emit('input', this.stateValue)
+        },
+    }
 }
 </script>
 
 <style scoped>
-.content-font-size,
 /deep/ .el-input,
 /deep/ .el-select .el-input .el-select__caret {
     font-size: 62.5%;
@@ -297,30 +114,4 @@ export default {
 
 .el-input__icon {
     width: 2rem;
-}
-
-.spend-time-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 0.8rem;
-}
-
-.spend-time-padding {
-    padding: 0.6rem 1rem;
-}
-
-.spend-time-padding + .spend-time-padding {
-    margin-left: 0;
-}
-
-.defaultSelectTimeStyle {
-    border-color: #e67e22;
-    background-color: #fdf2e9;
-    color: #cf711f;
-}
-
-.dialog-footer {
-    text-align: right;
-}
-</style>
+}</style>
