@@ -23,7 +23,9 @@
     overflow: auto;
 }
 
-.el-table{
+.el-table,
+.el-picker-panel__shortcut,
+.el-date-picker__header-label{
     font-size: 62.5%;
 }
 
@@ -38,7 +40,8 @@
 .el-year-table td .cell:hover, .el-year-table td.current:not(.disabled) .cell,
 .el-month-table td .cell:hover,
 .el-month-table td.current:not(.disabled) .cell,
-.el-date-table td.today span{
+.el-date-table td.today span,
+.el-picker-panel__shortcut:hover{
     color: #cf711f;
 }
 
@@ -158,6 +161,10 @@
     margin-top: 1.6rem;
 }
 
+.mt24 {
+    margin-top: 2.4rem;
+}
+
 .el-range-editor.is-active, .el-range-editor.is-active:hover, .el-select .el-input.is-focus .el-input__inner,
 .el-select .el-input__inner:focus{
     border-color: #cf711f;
@@ -169,4 +176,40 @@
 
 .el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
     background-color: #fdf2e9;
+}
+
+.has-sidebar {
+    overflow: hidden;
+}
+
+.el-date-picker {
+    width: 26rem;
+}
+
+.el-date-editor /deep/ .el-popper[x-placement^=bottom] {
+    margin-top: 0.9rem;
+}
+
+.el-date-picker.has-sidebar {
+    width: 33.8rem;
+}
+
+.el-picker-panel [slot=sidebar], .el-picker-panel__sidebar {
+    width: 6rem;
+}
+
+.el-picker-panel [slot=sidebar]+.el-picker-panel__body, .el-picker-panel__sidebar+.el-picker-panel__body {
+    margin-left: 6rem;
+}
+
+.el-date-picker__header {
+    margin: 0.7rem;
+}
+
+.el-date-picker .el-picker-panel__content {
+    width: 24.2rem;
+}
+
+.el-picker-panel__content {
+    margin: 1rem;
 }

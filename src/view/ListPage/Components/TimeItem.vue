@@ -53,8 +53,6 @@ export default {
         this.stateValue = new Date(this.value.getTime());
         this.time.hour = this.stateValue.getHours().toString().padStart(2, '0');
         this.time.minute = this.stateValue.getMinutes().toString().padStart(2, '0');
-
-
     },
 
     methods: {

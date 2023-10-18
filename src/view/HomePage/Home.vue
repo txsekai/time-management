@@ -27,9 +27,9 @@
                             <template slot="header">
                                 <el-date-picker
                                     v-model="oneDayTotalTime"
+                                    align="right"
                                     type="date"
                                     value-format="yyyy-MM-dd"
-                                    size="mini"
                                 ></el-date-picker>
                             </template>
                         </el-table-column>
@@ -212,11 +212,6 @@ export default {
 
 /deep/ .el-table thead {
     color: #cf711f;
-}
-
-.el-date-picker {
-    top: 12.6rem !important;
-    left: 130.7rem !important;
 }
 
 .el-date-editor.el-input, .el-date-editor.el-input__inner {

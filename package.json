@@ -12,6 +12,7 @@
     "echarts": "^5.4.3",
     "element-ui": "^2.15.14",
     "ionicons": "^7.1.2",
+    "moment": "^2.29.4",
     "vue": "^2.6.11",
     "vue-router": "^3.6.5"
   },

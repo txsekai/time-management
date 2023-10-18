@@ -19,7 +19,7 @@
                             >{{ tag }}
                             </el-tag>
                         </el-row>
-<!--                        TODO 日期时间可以删除-->
+                        <!--                        TODO 日期时间可以删除-->
                         <el-row>
                             <span>{{ task.dateAndTime }}</span>
                         </el-row>
@@ -57,21 +57,26 @@
         <el-button class="add-list-button" @click="addTask">+ 添加事项</el-button>
 
         <tag-dialog :tag-dialog-visible="tagDialogVisible" :task="currentTask" @tagConfirm="tagDialogVisible=false"
-                  @tagCancel="tagDialogVisible=false;currentTask.tags=tagsBk"
-                  :tags-bk="tagsBk"></tag-dialog>
+                    @tagCancel="tagDialogVisible=false;currentTask.tags=tagsBk"
+                    :tags-bk="tagsBk"></tag-dialog>
 
-        <date-dialog :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible=false"
-                   @dateCancel="dateDialogVisible=false"></date-dialog>
+<!--        <date-dialog :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible=false"-->
+<!--                     @dateCancel="dateDialogVisible=false"></date-dialog>-->
+
+        <date-and-time-dialog :date-and-time-dialog-visible="dateAndTimeDialogVisible"
+                              :task="currentTask"
+                              @confirm="dateAndTimeDialogVisible=false"
+                              @cancel="dateAndTimeDialogVisible=false"></date-and-time-dialog>
     </div>
 </template>
 
 <script>
 import TagDialog from "@/view/ListPage/Components/TagDialog.vue";
-import DateDialog from "@/view/ListPage/Components/DateDialog.vue";
+import DateAndTimeDialog from "@/view/ListPage/Components/DateAndTimeDialog.vue";
 
 export default {
     name: 'TaskList',
-    components: {DateDialog, TagDialog},
+    components: {DateAndTimeDialog, TagDialog},
 
     data() {
         return {
@@ -80,7 +85,8 @@ export default {
             currentTask: {tags: []},
             tagsBk: [],
             showSettings: false,
-            dateDialogVisible: false,
+            // dateDialogVisible: false,
+            dateAndTimeDialogVisible: false,
         }
     },
 
@@ -131,8 +137,12 @@ export default {
             this.tagsBk = Object.assign([], task.tags);
             this.tagDialogVisible = true
         },
+        // openDateDialog(task) {
+        //     this.dateDialogVisible = true
+        //     this.currentTask = task
+        // },
         openDateDialog(task) {
-            this.dateDialogVisible = true
+            this.dateAndTimeDialogVisible = true
             this.currentTask = task
         },
     },
