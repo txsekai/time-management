@@ -36,7 +36,8 @@
                                     <el-button class="setting-icon" icon="el-icon-time"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="重复" placement="bottom-start">
-                                    <el-button class="setting-icon" icon="el-icon-refresh"></el-button>
+                                    <el-button class="setting-icon" icon="el-icon-refresh"
+                                                @click="openRepeatDialog"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="优先级" placement="bottom-start">
                                     <el-button class="setting-icon" icon="el-icon-star-on"></el-button>
@@ -61,16 +62,20 @@
                               :task="currentTask"
                               @confirm="dateAndTimeDialogVisible=false"
                               @cancel="dateAndTimeDialogVisible=false"></date-and-time-dialog>
+
+        <repeat-dialog :repeat-dialog-visible="repeatDialogVisible" @repeatConfirm="repeatDialogVisible=false"
+                       @repeatCancel="repeatDialogVisible=false"></repeat-dialog>
     </div>
 </template>
 
 <script>
 import TagDialog from "@/view/ListPage/Components/TagDialog.vue";
 import DateAndTimeDialog from "@/view/ListPage/Components/DateAndTimeDialog.vue";
+import RepeatDialog from "@/view/ListPage/Components/RepeatDialog.vue";
 
 export default {
     name: 'TaskList',
-    components: {DateAndTimeDialog, TagDialog},
+    components: {RepeatDialog, DateAndTimeDialog, TagDialog},
 
     data() {
         return {
@@ -81,6 +86,7 @@ export default {
             showSettings: false,
             // dateDialogVisible: false,
             dateAndTimeDialogVisible: false,
+            repeatDialogVisible: false,
         }
     },
 
@@ -139,6 +145,9 @@ export default {
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
         },
+        openRepeatDialog() {
+            this.repeatDialogVisible = true
+        }
     },
 }
 </script>

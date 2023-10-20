@@ -33,7 +33,8 @@ export default {
             debugger
             this.stateValue = new Date(val.getFullYear(), val.getMonth(), val.getDate())
 
-            this.date = new Date(val.getFullYear(), val.getMonth(), val.getDate());
+            // this.date = new Date(val.getFullYear(), val.getMonth(), val.getDate());
+            this.date = this.stateValue
         }
     },
 
@@ -47,7 +48,8 @@ export default {
     created() {
         debugger
         this.stateValue = new Date(this.value.getFullYear(), this.value.getMonth(), this.value.getDate())
-        this.date = new Date(this.stateValue.getFullYear(), this.stateValue.getMonth(), this.stateValue.getDate());
+        // this.date = new Date(this.stateValue.getFullYear(), this.stateValue.getMonth(), this.stateValue.getDate());
+        this.date = this.stateValue
     },
 
     methods: {
