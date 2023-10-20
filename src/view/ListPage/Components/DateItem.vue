@@ -1,6 +1,6 @@
 <template>
     <el-date-picker
-            v-model="date"
+            v-model="stateValue"
             :align="align"
             type="date"
             :picker-options="pickerOptions"
@@ -30,35 +30,28 @@ export default {
 
     watch: {
         value(val) {
-            debugger
-            this.stateValue = new Date(val.getFullYear(), val.getMonth(), val.getDate())
-
-            // this.date = new Date(val.getFullYear(), val.getMonth(), val.getDate());
-            this.date = this.stateValue
+            this.stateValue = new Date(val.getTime());
         }
     },
 
     data() {
         return {
-            date: null,
             stateValue: null,
         }
     },
 
     created() {
-        debugger
-        this.stateValue = new Date(this.value.getFullYear(), this.value.getMonth(), this.value.getDate())
-        // this.date = new Date(this.stateValue.getFullYear(), this.stateValue.getMonth(), this.stateValue.getDate());
-        this.date = this.stateValue
+        this.stateValue = new Date(this.value.getTime());
     },
 
     methods: {
         handleChange() {
-            debugger
-            this.stateValue.setFullYear(this.date.getFullYear())
-            this.stateValue.setMonth(this.date.getMonth() + 1)
-            this.stateValue.setDate(this.date.getDate())
-            this.$emit('input', this.stateValue)
+            let tmpDateTime = new Date(this.stateValue.getTime());
+            tmpDateTime.setHours(this.value.getHours());
+            tmpDateTime.setMinutes(this.value.getMinutes());
+            tmpDateTime.setSeconds(0);
+            tmpDateTime.setMilliseconds(0);
+            this.$emit('input', tmpDateTime)
         }
     }
 }

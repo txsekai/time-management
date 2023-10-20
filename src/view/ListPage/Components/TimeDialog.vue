@@ -94,9 +94,6 @@ export default {
         }
     },
 
-    created() {
-        window['app'] = this;
-    },
 
     computed: {
         timeDialogTitle() {

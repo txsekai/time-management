@@ -26,12 +26,12 @@
 
         <el-row class="mt6">
             <el-col :span="12">
-                <date-item :value="startTime" :align="'left'"
+                <date-item v-model="startTime" :align="'left'"
                            :picker-options="pickerOptionsStartDate"></date-item>
             </el-col>
 
             <el-col :span="12" v-show="completedDateVisible">
-                <date-item :value="completedTime" :align="'right'"
+                <date-item v-model="completedTime" :align="'right'"
                            :picker-options="pickerOptionsCompletedDate"></date-item>
             </el-col>
         </el-row>
@@ -85,20 +85,30 @@
 
         </div>
 
+        <el-row class="mt16">
+            <el-button @click="repeatDialogVisible=true">重复</el-button>
+        </el-row>
+
         <div slot="footer" class="dialog-footer">
             <el-button class="button-padding" @click="handleDateConfirm">确认</el-button>
             <el-button class="button-padding" @click="handleDateCancel">取消</el-button>
         </div>
+
+        <repeat-dialog :repeat-dialog-visible="repeatDialogVisible" @repeatConfirm="repeatDialogVisible=false"
+                       @repeatCancel="repeatDialogVisible=false"
+                       :title="repeatDialogTitle"
+        ></repeat-dialog>
     </el-dialog>
 </template>
 
 <script>
 import TimeItem from "@/view/ListPage/Components/TimeItem.vue";
 import DateItem from "@/view/ListPage/Components/DateItem.vue";
+import RepeatDialog from "@/view/ListPage/Components/RepeatDialog.vue";
 
 export default {
     name: 'DateAndTimeDialog',
-    components: {DateItem, TimeItem},
+    components: {RepeatDialog, DateItem, TimeItem},
 
     props: {
         dateAndTimeDialogVisible: {
@@ -136,8 +146,9 @@ export default {
             pickerOptionsCompletedDate: {
                 disabledDate: time => {
                     const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate()); // 获取传入时间的凌晨时间
-
-                    return startOfDay.getTime() < this.startTime.setHours(0, 0, 0, 0);
+                    const copyOfStartTime = new Date(this.startTime.getTime());
+                    copyOfStartTime.setHours(0,0,0,0);
+                    return startOfDay.getTime() < copyOfStartTime;
                 },
                 shortcuts: [{
                     text: '今天',
@@ -146,61 +157,27 @@ export default {
                     }
                 }]
             },
+
+            repeatDialogVisible: false,
+            repeatDialogTitle: 'TODO 选好的日期时间'
         }
     },
 
     computed: {
         timeDiff() {
-            debugger
-            if(this.completedTime) {
+            if(this.switchCompletedTimeValue) {
                 return (this.completedTime - this.startTime) / 60000
             }else {
                 return ''
             }
-
-            // if (this.completedTime) {
-            //     if (!this.switchCompletedDateValue) {
-            //         const spendMinutes = (this.completedTime - this.startTime) / 60000
-            //
-            //         if (spendMinutes < 0) {
-            //             this.$message({
-            //                 message: '请先选择完成时间大于开始时间',
-            //                 type: 'warning'
-            //             })
-            //
-            //             return ''
-            //         } else {
-            //             return spendMinutes
-            //         }
-            //     } else {
-            //         if (this.startDate == this.completedDate) {
-            //             const spendMinutes = (this.completedTime - this.startTime) / 60000
-            //
-            //             if (spendMinutes < 0) {
-            //                 this.$message({
-            //                     message: '请先选择完成时间大于开始时间',
-            //                     type: 'warning'
-            //                 })
-            //
-            //                 return ''
-            //             } else {
-            //                 return spendMinutes
-            //             }
-            //         } else {
-            //             const spendDays = (this.completedDate - this.startDate) / 60000
-            //             const spendMinutes = (this.completedTime - this.startTime) / 60000
-            //             const spendTime = spendDays + spendMinutes
-            //
-            //             return spendTime
-            //         }
-            //     }
-            // } else {
-            //     return ''
-            // }
         }
+    },
+    created() {
+        window['app'] = this;
     },
 
     methods: {
+        // TODO 开始日期大于完成日期，把完成日期设为开始日期
         handleDateChange() {
             if (this.startTime > this.completedTime) {
                 this.completedTime = this.startTime
@@ -241,9 +218,6 @@ export default {
                 })
                 this.switchCompletedTimeValue = false
             }
-        },
-        handleNotNextDay() {
-
         },
         handlePlanTime(plan) {
             this.$set(this, 'completedTime', new Date(this.startTime.getTime() + plan * 60000));
