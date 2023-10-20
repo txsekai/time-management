@@ -173,7 +173,7 @@ export default {
 .content-font-size,
 /deep/ .el-input,
 /deep/ .el-select .el-input .el-select__caret {
-    font-size: 62.5%;
+    font-size: 1.4rem;
 }
 
 .spend-time-grid {

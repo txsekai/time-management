@@ -26,7 +26,7 @@
 .el-table,
 .el-picker-panel__shortcut,
 .el-date-picker__header-label{
-    font-size: 62.5%;
+    font-size: 1.4rem;
 }
 
 .el-picker-panel {
@@ -108,7 +108,7 @@
 }
 
 .el-tooltip__popper {
-    font-size: 62.5%;
+    font-size: 1.4rem;
     line-height: 1;
     padding: 0.8rem;
 }

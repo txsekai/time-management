@@ -3,12 +3,6 @@
         <el-row v-for="(task, index) in taskList" :key="index">
             <div class="task">
                 <input style="margin: 0.2rem" type="checkbox" v-model="task.complete"/>
-                <!--添加事项 -> input(editing = true) -> 没有输入内容 (TODO hover到icon上tooltip展示不可点), 然后blur -> editing = false，并删除这行
-                                                        输入内容 hover到icon上展示tooltip，然后点击icon时候(blur) -> 这行变为<div> && 展示tag-item dialog
-                                                        输入内容 不点击icon，blur -> 这行变为<div>
-
-                                                                                        点击icon弹dialog，并且input blur变为<div> -> 选/不选tag
-                -->
                 <div class="task-detail">
                     <template v-if="!task.editing">
                         <div @click="startEditing(task)">{{ task.content }}</div>
@@ -60,8 +54,8 @@
                     @tagCancel="tagDialogVisible=false;currentTask.tags=tagsBk"
                     :tags-bk="tagsBk"></tag-dialog>
 
-<!--        <date-dialog :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible=false"-->
-<!--                     @dateCancel="dateDialogVisible=false"></date-dialog>-->
+        <!--        <date-dialog :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible=false"-->
+        <!--                     @dateCancel="dateDialogVisible=false"></date-dialog>-->
 
         <date-and-time-dialog :date-and-time-dialog-visible="dateAndTimeDialogVisible"
                               :task="currentTask"
@@ -161,6 +155,7 @@ export default {
 }
 
 .task-detail {
+    font-size: 1.4rem;
     flex-grow: 1;
 }
 
@@ -189,7 +184,7 @@ export default {
 .add-list-button {
     border: none;
     padding: 0.5rem 1rem;
-    font-size: 62.5%;
+    font-size: 1.4rem;
     color: #000;
 }
 

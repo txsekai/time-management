@@ -79,7 +79,7 @@ export default {
 <style scoped>
 /deep/ .el-input,
 /deep/ .el-select .el-input .el-select__caret {
-    font-size: 62.5%;
+    font-size: 1.4rem;
 }
 
 .time-select {
@@ -104,7 +104,7 @@ export default {
 }
 
 .el-select-dropdown__item {
-    font-size: 62.5%;
+    font-size: 1.4rem;
     padding: 0 1rem;
     height: 2rem;
     line-height: 2rem;

@@ -205,7 +205,7 @@ export default {
 }
 
 .el-dropdown-menu__item, .el-menu-item {
-    font-size: 62.5%;
+    font-size: 1.2rem;
 }
 
 .el-dropdown-menu__item {

@@ -145,7 +145,7 @@ export default {
 
 <style scoped>
 /deep/ .el-button {
-    font-size: 62.5%;
+    font-size: 1.4rem;
 }
 
 .el-tag {

@@ -96,7 +96,7 @@ export default {
 /deep/ .el-button,
 /deep/ .el-dropdown-menu__item, .el-menu-item,
 .content-font-size {
-    font-size: 62.5%;
+    font-size: 1.4rem;
 }
 
 /deep/ .el-calendar__header {
