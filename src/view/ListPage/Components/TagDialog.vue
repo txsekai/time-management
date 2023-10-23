@@ -174,8 +174,4 @@ export default {
     margin-bottom: 1rem;
     vertical-align: bottom;
 }
-
-.dialog-footer {
-    text-align: right;
-}
 </style>

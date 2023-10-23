@@ -8,6 +8,7 @@
             :close-on-click-modal="false"
             :close-on-press-escape="false"
     >
+        <!--        TODO 不要这么多row-->
         <el-row>
             <el-col :span="12">
                 <span class="content-font-size">开始日期</span>
@@ -17,9 +18,8 @@
                 <span class="content-font-size">完成日期 </span>
                 <el-switch
                         style="width: 3.6rem"
-                        v-model="switchCompletedDateValue"
+                        v-model="completedDateVisible"
                         active-color="#cf711f"
-                        @change="handleCompletedDateSwitch"
                 ></el-switch>
             </el-col>
         </el-row>
@@ -41,9 +41,8 @@
                 <span class="content-font-size">开始时间 </span>
                 <el-switch
                         style="width: 3.6rem"
-                        v-model="switchStartTimeValue"
+                        v-model="startTimeVisible"
                         active-color="#cf711f"
-                        @change="handleStartTimeSwitch"
                 ></el-switch>
             </el-col>
 
@@ -51,9 +50,8 @@
                 <span class="content-font-size">完成时间 </span>
                 <el-switch
                         style="width: 3.6rem"
-                        v-model="switchCompletedTimeValue"
+                        v-model="completedTimeVisible"
                         active-color="#cf711f"
-                        @change="handleCompletedTimeSwitch"
                 ></el-switch>
             </el-col>
         </el-row>
@@ -63,7 +61,8 @@
                 <time-item v-model="startTime"></time-item>
             </el-col>
 
-            <el-col :span="6" style="min-height: 1rem"></el-col>
+            <el-col v-show="startTimeVisible" :span="6" style="min-height: 1rem"></el-col>
+            <el-col v-show="!startTimeVisible" :span="12" style="min-height: 1rem"></el-col>
 
             <el-col :span="6" v-show="completedTimeVisible">
                 <time-item v-model="completedTime"></time-item>
@@ -72,12 +71,13 @@
 
         <el-row class="mt12">
             <el-col :span="24" style="min-height: 1rem">
-                <span class="content-font-size" v-show="completedTimeVisible">所用时长：{{ timeDiff }} 分钟</span>
+                <span class="content-font-size" v-if="completedTimeVisible">所用时长：{{ timeDiff }} 分钟</span>
             </el-col>
         </el-row>
 
         <div class="spend-time-grid mt12">
-            <el-button v-for="t in timeSpentOptions" :key="t" class="spend-time-padding" :disabled="planTimeDisabled"
+            <el-button v-for="t in timeSpentOptions" :key="t" class="spend-time-padding"
+                       :disabled="timeSpentBtnDisabled"
                        @click="handlePlanTime(t)"
                        :class="{defaultSelectTimeStyle: (timeDiff == t)}"
             >{{ t }}分钟
@@ -114,26 +114,25 @@ export default {
         dateAndTimeDialogVisible: {
             type: Boolean,
             default: false
-        }
+        },
+        task: {
+            type: Object,
+            default: function() {
+                return {dateAndTime: {startTime: null, completedTime: null}}
+            }
+        },
     },
 
     data() {
         return {
-            switchCompletedDateValue: false,
-            // startDate: new Date(),
-            // completedDate: new Date(),
             completedDateVisible: false,
 
-            switchStartTimeValue: false,
             startTimeVisible: false,
-
-            switchCompletedTimeValue: false,
             startTime: new Date(),
-            completedTime: new Date(),
+            completedTime: null,
             completedTimeVisible: false,
 
             timeSpentOptions: [10, 15, 20, 30, 40, 60, 90, 120],
-            planTimeDisabled: true,
 
             pickerOptionsStartDate: {
                 shortcuts: [{
@@ -147,7 +146,7 @@ export default {
                 disabledDate: time => {
                     const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate()); // 获取传入时间的凌晨时间
                     const copyOfStartTime = new Date(this.startTime.getTime());
-                    copyOfStartTime.setHours(0,0,0,0);
+                    copyOfStartTime.setHours(0, 0, 0, 0);
                     return startOfDay.getTime() < copyOfStartTime;
                 },
                 shortcuts: [{
@@ -163,67 +162,99 @@ export default {
         }
     },
 
-    computed: {
-        timeDiff() {
-            if(this.switchCompletedTimeValue) {
-                return (this.completedTime - this.startTime) / 60000
-            }else {
-                return ''
+    watch: {
+        completedDateVisible(newVal) {
+            if (newVal) {
+                if (!this.completedTimeVisible) {
+                    let copy = new Date(this.startTime)
+                    this.completedTime = new Date(copy.setHours(23, 59, 59, 999))
+                } else {
+                    let copy = new Date(this.completedTime)
+                    this.$set(this, 'completedTime', new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate(), copy.getHours(), copy.getMinutes()))
+                }
+            } else {
+                let copy = new Date(this.completedTime)
+                this.$set(this, 'completedTime', new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate(), copy.getHours(), copy.getMinutes()))
+            }
+        },
+        startTimeVisible(newVal) {
+            if (!newVal) {
+                this.completedTimeVisible = false
+            }
+        },
+        completedTimeVisible(newVal) {
+            if (newVal) {
+                this.startTimeVisible = true;
+                if (this.completedDateVisible) {
+                    let copy = new Date(this.completedTime);
+                    copy.setHours(this.startTime.getHours(), this.startTime.getMinutes(), 0, 0);
+                    this.$set(this, 'completedTime', new Date(copy.getTime() + 30 * 60000))
+                } else {
+                    this.$set(this, 'completedTime', new Date(this.startTime.getTime() + 30 * 60000))
+                }
             }
         }
     },
+
+    computed: {
+        timeDiff() {
+            return this.completedTimeVisible ? (this.completedTime - this.startTime) / 60000 : ''
+
+        },
+        timeSpentBtnDisabled() {
+            return !this.completedTimeVisible;
+        }
+    },
+
     created() {
-        window['app'] = this;
+        if(this.task.dateAndTime) {
+            this.startTime = this.task.dateAndTime.startTime
+            this.completedTime = this.task.dateAndTime.completedTime
+        }else {
+            this.startTime = new Date(new Date().setSeconds(0, 0));
+        }
     },
 
     methods: {
-        // TODO 开始日期大于完成日期，把完成日期设为开始日期
-        handleDateChange() {
-            if (this.startTime > this.completedTime) {
-                this.completedTime = this.startTime
-            }
-        },
-        handleCompletedDateSwitch() {
-            if (this.switchCompletedDateValue) {
-                this.completedDateVisible = true
-            } else {
-                this.completedDateVisible = false
-            }
-        },
-        handleStartTimeSwitch() {
-            if (this.switchStartTimeValue) {
-                this.startTimeVisible = true
-            } else {
-                this.startTimeVisible = false
-                this.switchCompletedTimeValue = false
-                this.completedTimeVisible = false
-                this.planTimeDisabled = true
-            }
-        },
-        handleCompletedTimeSwitch() {
-            if (this.switchStartTimeValue) {
-                if (this.switchCompletedTimeValue) {
-                    this.completedTimeVisible = true
-                    this.planTimeDisabled = false
-                } else {
-                    this.completedTimeVisible = false
-                    this.planTimeDisabled = true
-                }
-
-                this.$set(this, 'completedTime', new Date(this.startTime.getTime() + 30 * 60000))
-            } else {
-                this.$message({
-                    message: '请先选择开始时间',
-                    type: 'warning'
-                })
-                this.switchCompletedTimeValue = false
-            }
-        },
         handlePlanTime(plan) {
             this.$set(this, 'completedTime', new Date(this.startTime.getTime() + plan * 60000));
         },
         handleDateConfirm() {
-            this.$emit("confirm")
+            debugger
+            if (this.timeDiff < 0) {
+                this.$message({
+                    message: '完成时间需大于开始时间',
+                    type: "warning"
+                })
+            } else {
+                // TODO 需要优化
+                if(!this.completedDateVisible && !this.startTimeVisible && !this.completedTimeVisible) {
+                    this.task.dateAndTime.startTime = new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate())
+                    this.task.dateAndTime.completedTime = null
+                }
+                if(!this.completedDateVisible && this.startTimeVisible && !this.completedTimeVisible) {
+                    this.task.dateAndTime.startTime = this.startTime
+                    this.task.dateAndTime.completedTime = null
+                }
+                if(!this.completedDateVisible && this.startTimeVisible && this.completedTimeVisible){
+                    this.task.dateAndTime.startTime = this.startTime
+                    this.task.dateAndTime.completedTime = this.completedTime
+                }
+                if(this.completedDateVisible && !this.startTimeVisible && !this.completedTimeVisible){
+                    this.task.dateAndTime.startTime = new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate())
+                    this.task.dateAndTime.completedTime = new Date(this.completedTime.getFullYear(), this.completedTime.getMonth(), this.completedTime.getDate())
+                }
+                if(this.completedDateVisible && this.startTimeVisible && !this.completedTimeVisible) {
+                    this.task.dateAndTime.startTime = this.startTime
+                    this.task.dateAndTime.completedTime = new Date(this.completedTime.getFullYear(), this.completedTime.getMonth(), this.completedTime.getDate())
+                }
+                if(this.completedDateVisible && this.startTimeVisible && this.completedTimeVisible){
+                    this.task.dateAndTime.startTime = this.startTime
+                    this.task.dateAndTime.completedTime = this.completedTime
+                }
+
+                this.$emit("confirm", this.task.dateAndTime)
+            }
         },
         handleDateCancel() {
             this.$emit("cancel")
@@ -260,9 +291,5 @@ export default {
     border-color: #e67e22;
     background-color: #fdf2e9;
     color: #cf711f;
-}
-
-.dialog-footer {
-    text-align: right;
 }
 </style>

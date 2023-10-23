@@ -14,8 +14,10 @@
                             </el-tag>
                         </el-row>
                         <!--                        TODO 日期时间可以删除-->
-                        <el-row>
-                            <span>{{ task.dateAndTime }}</span>
+                        <el-row v-if="task.dateAndTime.startTime">
+                            <span>开始：{{ formatDate(task.dateAndTime.startTime) }}</span>
+                            <span v-if="task.dateAndTime.completedTime"> ~ </span>
+                            <span v-if="task.dateAndTime.completedTime">完成：{{ formatDate(task.dateAndTime.completedTime) }}</span>
                         </el-row>
                     </template>
                     <template v-else>
@@ -30,13 +32,13 @@
                                 </el-tooltip>
                                 <el-tooltip content="日期" placement="bottom-start">
                                     <el-button class="setting-icon" icon="el-icon-date"
-                                               @click="openDateDialog(task)"></el-button>
+                                               @click="openDateAndTimeDialog(task)"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="时间" placement="bottom-start">
                                     <el-button class="setting-icon" icon="el-icon-time"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="重复" placement="bottom-start">
-<!--                                    TODO 点击button打开嵌套dialog-->
+                                    <!--                                    TODO 点击button打开嵌套dialog-->
                                     <el-button class="setting-icon" icon="el-icon-refresh"></el-button>
                                 </el-tooltip>
                                 <el-tooltip content="优先级" placement="bottom-start">
@@ -54,9 +56,6 @@
         <tag-dialog :tag-dialog-visible="tagDialogVisible" :task="currentTask" @tagConfirm="tagDialogVisible=false"
                     @tagCancel="tagDialogVisible=false;currentTask.tags=tagsBk"
                     :tags-bk="tagsBk"></tag-dialog>
-
-        <!--        <date-dialog :date-dialog-visible="dateDialogVisible" :task="currentTask" @dateConfirm="dateDialogVisible=false"-->
-        <!--                     @dateCancel="dateDialogVisible=false"></date-dialog>-->
 
         <date-and-time-dialog :date-and-time-dialog-visible="dateAndTimeDialogVisible"
                               :task="currentTask"
@@ -77,16 +76,17 @@ export default {
 
     data() {
         return {
-            taskList: [{ complete: false,
+            taskList: [{
+                complete: false,
                 content: '123',
                 editing: false,
                 tags: [],
-                dateAndTime: null}],
+                dateAndTime: {startTime: null, completedTime: null}
+            }],
             tagDialogVisible: false,
             currentTask: {tags: []},
             tagsBk: [],
             showSettings: false,
-            // dateDialogVisible: false,
             dateAndTimeDialogVisible: false,
         }
     },
@@ -98,7 +98,7 @@ export default {
                 content: '',
                 editing: true,
                 tags: [],
-                dateAndTime: null
+                dateAndTime: {startTime: null, completedTime: null}
             }
 
             this.taskList.push(newTask);
@@ -138,13 +138,32 @@ export default {
             this.tagsBk = Object.assign([], task.tags);
             this.tagDialogVisible = true
         },
-        // openDateDialog(task) {
-        //     this.dateDialogVisible = true
-        //     this.currentTask = task
-        // },
-        openDateDialog(task) {
+        openDateAndTimeDialog(task) {
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
+        },
+        formatDate(datetime) {
+            if(datetime === null) {
+                return ''
+            }
+            const temp = new Date(datetime)
+
+            const year = temp.getFullYear();
+            const month = temp.getMonth() + 1;
+            const day = temp.getDate();
+
+            const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+
+            let formattedTime = ''
+
+            if(temp.getHours() !== 0 && temp.getMinutes() !== 0) {
+                const hours = temp.getHours();
+                const minutes = temp.getMinutes();
+
+                formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+            }
+
+            return `${formattedDate} ${formattedTime}`
         },
     },
 }

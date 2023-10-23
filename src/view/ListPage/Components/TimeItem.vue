@@ -109,7 +109,4 @@ export default {
     height: 2rem;
     line-height: 2rem;
 }
-
-.el-input__icon {
-    width: 2rem;
-}</style>
+</style>

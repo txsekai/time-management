@@ -12,9 +12,9 @@
         <el-row>
             <el-col :span="12">
                 <span>重复</span>
-                <el-select v-model="repeatValue" @change="handleOptionChange">
+                <el-select v-model="repeatValue">
                     <el-option
-                            v-for="item in options"
+                            v-for="item in repeatOptions"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -28,6 +28,36 @@
                 </el-select>
             </el-col>
         </el-row>
+
+        <el-row class="mt16" v-if="endRepeatVisible">
+            <el-col :span="12">
+                <span>结束重复</span>
+                <el-select v-model="endRepeat">
+                    <el-option
+                            v-for="item in endRepeatOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                    ></el-option>
+
+                    <el-option
+                            :key="'endRepeatSelectedDate'"
+                            label="与日期"
+                            value="endRepeatSelectedDate"
+                    ></el-option>
+                </el-select>
+            </el-col>
+
+            <el-col :span="12" v-if="endDateVisible">
+                <span>结束日期</span>
+                <date-item style="margin-left: 1rem"
+                           v-model="endRepeatDate"
+                           :align="'right'"
+                           :picker-options="pickerOptions"
+                ></date-item>
+            </el-col>
+        </el-row>
+
         <div slot="footer" class="dialog-footer">
             <el-button class="button-padding" @click="handleRepeatConfirm">确认</el-button>
             <el-button class="button-padding" @click="handleRepeatCancel">取消</el-button>
@@ -42,10 +72,11 @@
 
 <script>
 import CustomRepeatDialog from "@/view/ListPage/Components/customRepeatDialog.vue";
+import DateItem from "@/view/ListPage/Components/DateItem.vue";
 
 export default {
     name: 'RepeatDialog',
-    components: {CustomRepeatDialog},
+    components: {DateItem, CustomRepeatDialog},
 
     props: {
         repeatDialogVisible: {
@@ -61,7 +92,7 @@ export default {
     data() {
         return {
             repeatValue: 'never',
-            options: [{
+            repeatOptions: [{
                 value: 'never',
                 label: '永不'
             }, {
@@ -71,24 +102,73 @@ export default {
                 value: 'everyWeek',
                 label: '每周'
             }, {
+                value: 'everyWorkDay',
+                label: '每周工作日'
+            }, {
                 value: 'everyMonth',
                 label: '每月'
             }, {
                 value: 'everyYear',
-                label: '每月'
+                label: '每年'
             }],
 
-            customRepeatDialogVisible: false
+            customRepeatDialogVisible: false,
+
+            endRepeat: 'never',
+            endRepeatOptions: [{
+                value: 'never',
+                label: '永不'
+            }],
+
+            endRepeatVisible: false,
+
+            endDateVisible: false,
+            endRepeatDate: null,
+            pickerOptions: {
+                // TODO 取dateAndTimeDialog的开始日期
+                disabledDate: time => {
+                    const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate())
+                    return startOfDay.getTime() < new Date().setHours(0, 0, 0, 0)
+                }
+            }
+        }
+    },
+
+    created() {
+        const currentDate = new Date()
+        currentDate.setDate(currentDate.getDate() + 7)
+        this.endRepeatDate = currentDate
+    },
+
+    watch: {
+        repeatValue: function (newValue) {
+            if (newValue == 'never') {
+                this.endRepeatVisible = false
+            } else {
+                this.endRepeatVisible = true
+            }
+            if (newValue == 'custom') {
+                this.customRepeatDialogVisible = true
+                this.endRepeatVisible = true
+            }
+        },
+
+        endRepeat(newValue) {
+            if (newValue == 'endRepeatSelectedDate') {
+                this.endDateVisible = true
+            } else {
+                this.endDateVisible = false
+            }
         }
     },
 
     methods: {
-        handleOptionChange(value) {
-            // TODO 从自定义再选自定义，也要打开dialog
-            if (value === 'custom') {
-                this.customRepeatDialogVisible = true
-            }
-        },
+        /*TODO
+        重复设置按照：把有打开的开始日期、时间+完成日期、时间当做一个整体来循环
+        在重复的时间内，该事项一直展示在TO DO card里
+            如果今天完成了，就移动到其他card里面；明天又出现在TO DO card里
+        更改一个重复的事项，会提示只更改该事项还是将来的都改
+         */
         handleRepeatConfirm() {
             this.$emit("repeatConfirm")
         },
@@ -101,7 +181,29 @@ export default {
 
 <style scoped>
 .el-select {
-    margin-left: 2rem;
-    width: 12rem;
+    margin-left: 1rem;
+    width: 10rem;
+}
+
+/deep/ .el-input--suffix .el-input__inner {
+    padding-right: 1rem;
+}
+
+/deep/ .el-input__inner {
+    height: 2.5rem;
+    line-height: 2.5rem;
+    padding: 0 0.75rem;
+}
+
+/deep/ .el-input__icon {
+    line-height: 2.5rem;
+    width: 2.5rem;
+}
+
+.el-select-dropdown__item {
+    font-size: 1.4rem;
+    padding: 0 1rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
 }
 </style>
