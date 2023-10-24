@@ -139,6 +139,7 @@ export default {
             this.tagDialogVisible = true
         },
         openDateAndTimeDialog(task) {
+            debugger
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
         },
@@ -152,11 +153,19 @@ export default {
             const month = temp.getMonth() + 1;
             const day = temp.getDate();
 
-            const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+            let formattedDate = ''
+
+            const current = new Date()
+            if(year == current.getFullYear() && month == current.getMonth()+1 && day == current.getDate()) {
+                formattedDate = '今天'
+            }else {
+                formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
+            }
 
             let formattedTime = ''
 
-            if(temp.getHours() !== 0 && temp.getMinutes() !== 0) {
+            // TODO 这个判断有问题，如果用户选了00:00
+            if(temp.getHours() !== 0 || temp.getMinutes() !== 0) {
                 const hours = temp.getHours();
                 const minutes = temp.getMinutes();
 

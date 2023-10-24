@@ -117,7 +117,7 @@ export default {
         },
         task: {
             type: Object,
-            default: function() {
+            default: function () {
                 return {dateAndTime: {startTime: null, completedTime: null}}
             }
         },
@@ -129,7 +129,7 @@ export default {
 
             startTimeVisible: false,
             startTime: new Date(),
-            completedTime: null,
+            completedTime: new Date(),
             completedTimeVisible: false,
 
             timeSpentOptions: [10, 15, 20, 30, 40, 60, 90, 120],
@@ -162,7 +162,40 @@ export default {
         }
     },
 
+    created() {
+        // TODO 为什么没有把父组件设好的时间赋在页面上---再打开dialog，没有走这里
+        // if(this.task.dateAndTime) {
+        //     this.startTime = this.task.dateAndTime.startTime
+        //     this.completedTime = this.task.dateAndTime.completedTime
+        // }else {
+        //     this.startTime = new Date(new Date().setSeconds(0, 0));
+        // }
+        // this.startTime = new Date(new Date().setSeconds(0, 0));
+    },
+
     watch: {
+        task(newTask) {
+            debugger
+            if (newTask.dateAndTime.startTime == null) {
+                this.completedDateVisible = false
+                this.startTimeVisible = false
+                this.completedTimeVisible = false
+
+                const temp = new Date()
+                temp.setSeconds(0, 0)
+                this.startTime = temp
+                this.completedTime = temp
+            } else {
+                this.startTime = new Date(newTask.dateAndTime.startTime.setSeconds(0, 0))
+                this.completedTime = new Date(newTask.dateAndTime.completedTime.setSeconds(0, 0))
+            }
+        },
+        startTime(newVal) {
+            if (!this.completedDateVisible) {
+                let copy = new Date(this.completedTime)
+                this.$set(this, 'completedTime', new Date(newVal.getFullYear(), newVal.getMonth(), newVal.getDate(), copy.getHours(), copy.getMinutes()))
+            }
+        },
         completedDateVisible(newVal) {
             if (newVal) {
                 if (!this.completedTimeVisible) {
@@ -198,20 +231,11 @@ export default {
 
     computed: {
         timeDiff() {
+            // TODO 转为天数
             return this.completedTimeVisible ? (this.completedTime - this.startTime) / 60000 : ''
-
         },
         timeSpentBtnDisabled() {
             return !this.completedTimeVisible;
-        }
-    },
-
-    created() {
-        if(this.task.dateAndTime) {
-            this.startTime = this.task.dateAndTime.startTime
-            this.completedTime = this.task.dateAndTime.completedTime
-        }else {
-            this.startTime = new Date(new Date().setSeconds(0, 0));
         }
     },
 
@@ -220,7 +244,6 @@ export default {
             this.$set(this, 'completedTime', new Date(this.startTime.getTime() + plan * 60000));
         },
         handleDateConfirm() {
-            debugger
             if (this.timeDiff < 0) {
                 this.$message({
                     message: '完成时间需大于开始时间',
@@ -228,27 +251,27 @@ export default {
                 })
             } else {
                 // TODO 需要优化
-                if(!this.completedDateVisible && !this.startTimeVisible && !this.completedTimeVisible) {
+                if (!this.completedDateVisible && !this.startTimeVisible && !this.completedTimeVisible) {
                     this.task.dateAndTime.startTime = new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate())
                     this.task.dateAndTime.completedTime = null
                 }
-                if(!this.completedDateVisible && this.startTimeVisible && !this.completedTimeVisible) {
+                if (!this.completedDateVisible && this.startTimeVisible && !this.completedTimeVisible) {
                     this.task.dateAndTime.startTime = this.startTime
                     this.task.dateAndTime.completedTime = null
                 }
-                if(!this.completedDateVisible && this.startTimeVisible && this.completedTimeVisible){
+                if (!this.completedDateVisible && this.startTimeVisible && this.completedTimeVisible) {
                     this.task.dateAndTime.startTime = this.startTime
                     this.task.dateAndTime.completedTime = this.completedTime
                 }
-                if(this.completedDateVisible && !this.startTimeVisible && !this.completedTimeVisible){
+                if (this.completedDateVisible && !this.startTimeVisible && !this.completedTimeVisible) {
                     this.task.dateAndTime.startTime = new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate())
                     this.task.dateAndTime.completedTime = new Date(this.completedTime.getFullYear(), this.completedTime.getMonth(), this.completedTime.getDate())
                 }
-                if(this.completedDateVisible && this.startTimeVisible && !this.completedTimeVisible) {
+                if (this.completedDateVisible && this.startTimeVisible && !this.completedTimeVisible) {
                     this.task.dateAndTime.startTime = this.startTime
                     this.task.dateAndTime.completedTime = new Date(this.completedTime.getFullYear(), this.completedTime.getMonth(), this.completedTime.getDate())
                 }
-                if(this.completedDateVisible && this.startTimeVisible && this.completedTimeVisible){
+                if (this.completedDateVisible && this.startTimeVisible && this.completedTimeVisible) {
                     this.task.dateAndTime.startTime = this.startTime
                     this.task.dateAndTime.completedTime = this.completedTime
                 }
