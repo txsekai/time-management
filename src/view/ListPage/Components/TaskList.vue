@@ -139,7 +139,6 @@ export default {
             this.tagDialogVisible = true
         },
         openDateAndTimeDialog(task) {
-            debugger
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
         },

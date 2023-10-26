@@ -12,6 +12,7 @@
         <el-row>
             <el-col :span="12">
                 <span>重复</span>
+<!--                TODO 让两列的select对齐。 只能改为el-form是相对简单的？-->
                 <el-select v-model="repeatValue">
                     <el-option
                             v-for="item in repeatOptions"
@@ -141,7 +142,7 @@ export default {
     },
 
     watch: {
-        repeatValue: function (newValue) {
+        repeatValue(newValue) {
             if (newValue == 'never') {
                 this.endRepeatVisible = false
             } else {
@@ -182,7 +183,7 @@ export default {
 <style scoped>
 .el-select {
     margin-left: 1rem;
-    width: 10rem;
+    width: 12rem;
 }
 
 /deep/ .el-input--suffix .el-input__inner {
