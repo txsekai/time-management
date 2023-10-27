@@ -15,8 +15,7 @@ export default {
 
     props: {
         value: {
-            type: Date,
-            required: true
+            type: Date
         },
         align: {
             type: String,
@@ -30,7 +29,9 @@ export default {
 
     watch: {
         value(val) {
-            this.stateValue = new Date(val.getTime());
+            if(val !== null) {
+                this.stateValue = new Date(val.getTime());
+            }
         }
     },
 
@@ -41,7 +42,9 @@ export default {
     },
 
     created() {
-        this.stateValue = new Date(this.value.getTime());
+        if(this.value !== null) {
+            this.stateValue = new Date(this.value.getTime());
+        }
     },
 
     methods: {

@@ -26,16 +26,17 @@ export default {
 
     props: {
         value: {
-            type: Date,
-            required: true
+            type: Date
         }
     },
 
     watch: {
         value(val) {
-            this.stateValue = new Date(val.getTime());
-            this.time.hour = val.getHours().toString().padStart(2, '0');
-            this.time.minute = val.getMinutes().toString().padStart(2, '0');
+            if(val !== null) {
+                this.stateValue = new Date(val.getTime());
+                this.time.hour = val.getHours().toString().padStart(2, '0');
+                this.time.minute = val.getMinutes().toString().padStart(2, '0');
+            }
         }
     },
 
@@ -50,9 +51,11 @@ export default {
 
     created() {
         this.initOptions()
-        this.stateValue = new Date(this.value.getTime());
-        this.time.hour = this.stateValue.getHours().toString().padStart(2, '0');
-        this.time.minute = this.stateValue.getMinutes().toString().padStart(2, '0');
+        if(this.value !== null) {
+            this.stateValue = new Date(this.value.getTime());
+            this.time.hour = this.stateValue.getHours().toString().padStart(2, '0');
+            this.time.minute = this.stateValue.getMinutes().toString().padStart(2, '0');
+        }
     },
 
     methods: {
