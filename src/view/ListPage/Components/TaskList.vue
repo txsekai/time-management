@@ -60,7 +60,9 @@
         <date-and-time-dialog :date-and-time-dialog-visible="dateAndTimeDialogVisible"
                               :task="currentTask"
                               @confirm="dateAndTimeDialogVisible=false"
-                              @cancel="dateAndTimeDialogVisible=false"></date-and-time-dialog>
+                              @cancel="dateAndTimeDialogVisible=false"
+                              :date-and-time-bk="dateAndTimeBk"
+        ></date-and-time-dialog>
 
 
     </div>
@@ -87,7 +89,9 @@ export default {
             currentTask: {tags: []},
             tagsBk: [],
             showSettings: false,
+
             dateAndTimeDialogVisible: false,
+            dateAndTimeBk: {startTime: null, completedTime: null}
         }
     },
 
@@ -141,6 +145,7 @@ export default {
         openDateAndTimeDialog(task) {
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
+            this.dateAndTimeBk = Object.assign({},task.dateAndTime)
         },
         formatDate(datetime) {
             if(datetime === null) {
@@ -163,7 +168,7 @@ export default {
 
             let formattedTime = ''
 
-            // TODO 这个判断有问题，如果用户选了00:00
+            // TODO 这个判断有问题，如果用户开始时间选了选了23:59
             if((temp.getHours() == 0 && temp.getMinutes() == 0) || (temp.getHours() == 23 && temp.getMinutes() == 59)) {
                 formattedTime = ''
             }else {

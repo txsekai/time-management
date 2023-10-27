@@ -71,7 +71,8 @@
 
         <el-row class="mt12">
             <el-col :span="24" style="min-height: 1rem">
-                <el-col :span="12"><span class="content-font-size" v-if="completedTimeVisible">所用时长：{{ timeDiff }} 分钟</span></el-col>
+                <el-col :span="12"><span class="content-font-size" v-if="completedTimeVisible">所用时长：{{ timeDiff }} 分钟</span>
+                </el-col>
 
                 <el-col :span="12"><span>{{ formattedTimeDiff }}</span></el-col>
 
@@ -124,6 +125,12 @@ export default {
                 return {dateAndTime: {startTime: null, completedTime: null}}
             }
         },
+        dateAndTimeBk: {
+            type: Object,
+            default: function () {
+                return {startTime: null, completedTime: null}
+            }
+        }
     },
 
     data() {
@@ -166,42 +173,46 @@ export default {
     },
 
     created() {
-        // this.startTime = new Date(new Date().setSeconds(0, 0));
     },
 
     watch: {
-        task(newTask) {
-            // TODO 点取消有问题
-            if (newTask.dateAndTime.startTime == null) {
-                this.startTimeVisible = false
-                this.completedDateVisible = false
-                this.completedTimeVisible = false
-
-                this.startTime = new Date(new Date().setHours(0, 0, 0, 0));
-            } else {
-                if (newTask.dateAndTime.startTime.getHours() == 0 && newTask.dateAndTime.startTime.getMinutes() == 0) {
+        task: {
+            handler(newTask) {
+                debugger
+                if (newTask.dateAndTime.startTime == null) {
                     this.startTimeVisible = false
-                } else {
-                    this.startTimeVisible = true
-                    this.startTime = new Date(newTask.dateAndTime.startTime.setSeconds(0, 0))
-                }
-                if (newTask.dateAndTime.completedTime !== null) {
-
-                    if (newTask.dateAndTime.completedTime.getHours() == 23 && newTask.dateAndTime.completedTime.getMinutes() == 59) {
-                        this.completedDateVisible = true
-                        this.completedTimeVisible = false
-
-                        this.completedTime = new Date(newTask.dateAndTime.completedTime.setHours(23, 59, 59, 999))
-                    } else {
-                        this.completedDateVisible = true
-                        this.completedTimeVisible = true
-                        this.completedTime = new Date(newTask.dateAndTime.completedTime.setSeconds(0, 0))
-                    }
-                } else {
                     this.completedDateVisible = false
                     this.completedTimeVisible = false
+
+                    this.startTime = new Date(new Date().setHours(0, 0, 0, 0));
+                } else {
+                    if (newTask.dateAndTime.startTime.getHours() == 0 && newTask.dateAndTime.startTime.getMinutes() == 0) {
+                        this.startTimeVisible = false
+                        this.startTime = new Date(newTask.dateAndTime.startTime.setHours(0, 0, 0, 0))
+                    } else {
+                        debugger
+                        this.startTimeVisible = true
+                        this.startTime = new Date(newTask.dateAndTime.startTime.setSeconds(0, 0))
+                    }
+                    if (newTask.dateAndTime.completedTime !== null) {
+
+                        if (newTask.dateAndTime.completedTime.getHours() == 23 && newTask.dateAndTime.completedTime.getMinutes() == 59) {
+                            this.completedDateVisible = true
+                            this.completedTimeVisible = false
+
+                            this.completedTime = new Date(newTask.dateAndTime.completedTime.setHours(23, 59, 59, 999))
+                        } else {
+                            this.completedDateVisible = true
+                            this.completedTimeVisible = true
+                            this.completedTime = new Date(newTask.dateAndTime.completedTime.setSeconds(0, 0))
+                        }
+                    } else {
+                        this.completedDateVisible = false
+                        this.completedTimeVisible = false
+                    }
                 }
-            }
+            },
+            deep: true
         },
         /*
         1. 源头确保时间选择关闭的时候dateTime对象的时分是00
@@ -303,9 +314,9 @@ export default {
                 }
             } else {
                 if (hourDiff === 0) {
-                    if(minDiff === 0) {
+                    if (minDiff === 0) {
                         return `${dayDiff}天`;
-                    }else {
+                    } else {
                         return `${dayDiff}天${minDiff}分钟`;
                     }
                 } else {
@@ -339,6 +350,8 @@ export default {
             }
         },
         handleDateCancel() {
+            this.task.dateAndTime.startTime = this.dateAndTimeBk.startTime
+            this.task.dateAndTime.completedTime = this.dateAndTimeBk.completedTime
             this.$emit("cancel")
         },
     },
