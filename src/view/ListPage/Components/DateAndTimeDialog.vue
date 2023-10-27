@@ -71,7 +71,10 @@
 
         <el-row class="mt12">
             <el-col :span="24" style="min-height: 1rem">
-                <span class="content-font-size" v-if="completedTimeVisible">所用时长：{{ timeDiff }} 分钟</span>
+                <el-col :span="12"><span class="content-font-size" v-if="completedTimeVisible">所用时长：{{ timeDiff }} 分钟</span></el-col>
+
+                <el-col :span="12"><span>{{ formattedTimeDiff }}</span></el-col>
+
             </el-col>
         </el-row>
 
@@ -163,31 +166,41 @@ export default {
     },
 
     created() {
-        // TODO 为什么没有把父组件设好的时间赋在页面上---再打开dialog，没有走这里
-        // if(this.task.dateAndTime) {
-        //     this.startTime = this.task.dateAndTime.startTime
-        //     this.completedTime = this.task.dateAndTime.completedTime
-        // }else {
-        //     this.startTime = new Date(new Date().setSeconds(0, 0));
-        // }
-        this.startTime = new Date(new Date().setSeconds(0, 0));
+        // this.startTime = new Date(new Date().setSeconds(0, 0));
     },
 
     watch: {
-        // TODO 父组件传过来值，子组件开关有问题
         task(newTask) {
+            // TODO 点取消有问题
             if (newTask.dateAndTime.startTime == null) {
                 this.startTimeVisible = false
                 this.completedDateVisible = false
                 this.completedTimeVisible = false
 
-                const temp = new Date()
-                temp.setSeconds(0, 0)
-                this.startTime = temp
-                this.completedTime = temp
+                this.startTime = new Date(new Date().setHours(0, 0, 0, 0));
             } else {
-                this.startTime = new Date(newTask.dateAndTime.startTime.setSeconds(0, 0))
-                this.completedTime = new Date(newTask.dateAndTime.completedTime.setSeconds(0, 0))
+                if (newTask.dateAndTime.startTime.getHours() == 0 && newTask.dateAndTime.startTime.getMinutes() == 0) {
+                    this.startTimeVisible = false
+                } else {
+                    this.startTimeVisible = true
+                    this.startTime = new Date(newTask.dateAndTime.startTime.setSeconds(0, 0))
+                }
+                if (newTask.dateAndTime.completedTime !== null) {
+
+                    if (newTask.dateAndTime.completedTime.getHours() == 23 && newTask.dateAndTime.completedTime.getMinutes() == 59) {
+                        this.completedDateVisible = true
+                        this.completedTimeVisible = false
+
+                        this.completedTime = new Date(newTask.dateAndTime.completedTime.setHours(23, 59, 59, 999))
+                    } else {
+                        this.completedDateVisible = true
+                        this.completedTimeVisible = true
+                        this.completedTime = new Date(newTask.dateAndTime.completedTime.setSeconds(0, 0))
+                    }
+                } else {
+                    this.completedDateVisible = false
+                    this.completedTimeVisible = false
+                }
             }
         },
         /*
@@ -196,31 +209,27 @@ export default {
          */
         startTime(newVal) {
             if (!this.completedDateVisible) {
-                if(this.completedTimeVisible) {
+                if (this.completedTimeVisible) {
                     let copy = new Date(this.completedTime)
                     this.$set(this, 'completedTime', new Date(newVal.getFullYear(), newVal.getMonth(), newVal.getDate(), copy.getHours(), copy.getMinutes()))
-                }else {
+                } else {
                     this.completedTime = null
                 }
             }
         },
-
         startTimeVisible(newVal) {
             if (!newVal) {
                 let copyStartTime = new Date(this.startTime)
                 this.startTime = new Date(copyStartTime.setHours(0, 0, 0, 0))
-                // this.$set(this, 'startTime', new Date(copyStartTime.getFullYear(), copyStartTime.getMonth(), copyStartTime.getDate(), null, null))
 
-                this.completedTimeVisible = false
-                debugger
-                if(this.completedDateVisible) {
+                if (this.completedDateVisible) {
                     let copyCompletedTime = new Date(this.completedTime)
                     this.completedTime = new Date(copyCompletedTime.setHours(23, 59, 59, 999))
-                }else {
+                } else {
                     this.completedTime = null
                 }
-            }else {
-                debugger
+                this.completedTimeVisible = false
+            } else {
                 let copy = new Date()
                 this.$set(this, 'startTime', new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate(), copy.getHours(), copy.getMinutes()))
             }
@@ -235,30 +244,39 @@ export default {
                     this.$set(this, 'completedTime', new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate(), copy.getHours(), copy.getMinutes()))
                 }
             } else {
-                if(this.completedTimeVisible) {
+                if (this.completedTimeVisible) {
                     let copy = new Date(this.completedTime)
                     this.$set(this, 'completedTime', new Date(this.startTime.getFullYear(), this.startTime.getMonth(), this.startTime.getDate(), copy.getHours(), copy.getMinutes()))
-                }else {
+                } else {
                     this.completedTime = null
                 }
             }
         },
         completedTimeVisible(newVal) {
             if (newVal) {
-                this.startTimeVisible = true;
                 if (this.completedDateVisible) {
                     let copy = new Date(this.completedTime);
-                    copy.setHours(this.startTime.getHours(), this.startTime.getMinutes(), 0, 0);
+                    if (this.startTimeVisible) {
+                        copy.setHours(this.startTime.getHours(), this.startTime.getMinutes(), 0, 0);
+                    } else {
+                        const current = new Date()
+                        copy.setHours(current.getHours(), current.getMinutes(), 0, 0);
+                    }
                     this.$set(this, 'completedTime', new Date(copy.getTime() + 30 * 60000))
                 } else {
-                    debugger
-                    this.$set(this, 'completedTime', new Date(this.startTime.getTime() + 30 * 60000))
+                    if (this.startTimeVisible) {
+                        this.$set(this, 'completedTime', new Date(this.startTime.getTime() + 30 * 60000))
+                    } else {
+                        const current = new Date()
+                        this.$set(this, 'completedTime', new Date(current.getTime() + 30 * 60000))
+                    }
                 }
-            }else {
-                if(this.completedDateVisible) {
+                this.startTimeVisible = true;
+            } else {
+                if (this.completedDateVisible) {
                     let copy = new Date(this.completedTime)
                     this.completedTime = new Date(copy.setHours(23, 59, 59, 999))
-                }else {
+                } else {
                     this.completedTime = null
                 }
             }
@@ -267,8 +285,37 @@ export default {
 
     computed: {
         timeDiff() {
-            // TODO 转为天数
             return this.completedTimeVisible ? (this.completedTime - this.startTime) / 60000 : ''
+        },
+        formattedTimeDiff() {
+            const temp = this.timeDiff;
+            const dayDiff = Math.floor(temp / 1440);
+            const hourDiff = Math.floor((temp % 1440) / 60);
+            const minDiff = temp % 60;
+
+            if (temp <= 120) {
+                return '';
+            } else if (temp < 1440) {
+                if (minDiff === 0) {
+                    return `${hourDiff}小时`;
+                } else {
+                    return `${hourDiff}小时${minDiff}分钟`;
+                }
+            } else {
+                if (hourDiff === 0) {
+                    if(minDiff === 0) {
+                        return `${dayDiff}天`;
+                    }else {
+                        return `${dayDiff}天${minDiff}分钟`;
+                    }
+                } else {
+                    if (minDiff === 0) {
+                        return `${dayDiff}天${hourDiff}小时`;
+                    } else {
+                        return `${dayDiff}天${hourDiff}小时${minDiff}分钟`;
+                    }
+                }
+            }
         },
         timeSpentBtnDisabled() {
             return !this.completedTimeVisible;
@@ -280,14 +327,14 @@ export default {
             this.$set(this, 'completedTime', new Date(this.startTime.getTime() + plan * 60000));
         },
         handleDateConfirm() {
-            if (this.timeDiff < 0) {
+            if (this.timeDiff < 0 || (this.completedTime !== null && this.completedTime < this.startTime)) {
                 this.$message({
                     message: '完成时间需大于开始时间',
                     type: "warning"
                 })
             } else {
                 this.task.dateAndTime.startTime = this.startTime;
-                this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime: null;
+                this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime : null;
                 this.$emit("confirm", this.task.dateAndTime)
             }
         },

@@ -5,7 +5,7 @@
                 <input style="margin: 0.2rem" type="checkbox" v-model="task.complete"/>
                 <div class="task-detail">
                     <template v-if="!task.editing">
-                        <div @click="startEditing(task)">{{ task.content }}</div>
+                        <div class="edit-task" @click="startEditing(task)">{{ task.content }}</div>
                         <el-row class="tag-row">
                             <el-tag class="tag-group"
                                     v-for="tag in task.tags"
@@ -164,7 +164,9 @@ export default {
             let formattedTime = ''
 
             // TODO 这个判断有问题，如果用户选了00:00
-            if(temp.getHours() !== 0 || temp.getMinutes() !== 0) {
+            if((temp.getHours() == 0 && temp.getMinutes() == 0) || (temp.getHours() == 23 && temp.getMinutes() == 59)) {
+                formattedTime = ''
+            }else {
                 const hours = temp.getHours();
                 const minutes = temp.getMinutes();
 
@@ -191,6 +193,10 @@ export default {
 .task-detail {
     font-size: 1.4rem;
     flex-grow: 1;
+}
+
+.edit-task {
+    cursor: pointer;
 }
 
 .input-and-settings {
