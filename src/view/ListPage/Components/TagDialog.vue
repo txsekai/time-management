@@ -92,7 +92,7 @@ export default {
                         this.tagsBk.splice(index, 1)
                     }
                 }
-            })
+            }).catch(() => {})
         },
         handleSelectOrCancelTag(tag) {
             if (this.isSelected(tag)) {

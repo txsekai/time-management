@@ -94,6 +94,9 @@
         </el-row>
 
         <div slot="footer" class="dialog-footer">
+            <el-button v-show="this.task.dateAndTime.startTime!==null" class="button-padding"
+                       @click="handleDateDelete">删除日程
+            </el-button>
             <el-button class="button-padding" @click="handleDateConfirm">确认</el-button>
             <el-button class="button-padding" @click="handleDateCancel">取消</el-button>
         </div>
@@ -168,17 +171,13 @@ export default {
             },
 
             repeatDialogVisible: false,
-            repeatDialogTitle: 'TODO 选好的日期时间'
+            repeatDialogTitle: 'TODO 选好的日期时间',
         }
-    },
-
-    created() {
     },
 
     watch: {
         task: {
             handler(newTask) {
-                debugger
                 if (newTask.dateAndTime.startTime == null) {
                     this.startTimeVisible = false
                     this.completedDateVisible = false
@@ -190,7 +189,6 @@ export default {
                         this.startTimeVisible = false
                         this.startTime = new Date(newTask.dateAndTime.startTime.setHours(0, 0, 0, 0))
                     } else {
-                        debugger
                         this.startTimeVisible = true
                         this.startTime = new Date(newTask.dateAndTime.startTime.setSeconds(0, 0))
                     }
@@ -353,6 +351,19 @@ export default {
             this.task.dateAndTime.startTime = this.dateAndTimeBk.startTime
             this.task.dateAndTime.completedTime = this.dateAndTimeBk.completedTime
             this.$emit("cancel")
+        },
+        handleDateDelete() {
+            this.$confirm("确认要删除日程吗？", "确认", {
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                type: "warning"
+            }).then(() => {
+                this.startTime = null
+                this.completedTime = null
+                this.task.dateAndTime.startTime = this.startTime
+                this.task.dateAndTime.completedTime = this.completedTime
+                this.$emit("delete")
+            }).catch(() => {})
         },
     },
 }

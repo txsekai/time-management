@@ -62,6 +62,7 @@
                               @confirm="dateAndTimeDialogVisible=false"
                               @cancel="dateAndTimeDialogVisible=false"
                               :date-and-time-bk="dateAndTimeBk"
+                              @delete="dateAndTimeDialogVisible=false"
         ></date-and-time-dialog>
 
 
@@ -86,7 +87,7 @@ export default {
                 dateAndTime: {startTime: null, completedTime: null}
             }],
             tagDialogVisible: false,
-            currentTask: {tags: []},
+            currentTask: {tags: [], dateAndTime: {startTime: null, completedTime: null}},
             tagsBk: [],
             showSettings: false,
 

@@ -69,6 +69,12 @@
     color: #cf711f;
 }
 
+.el-button--primary {
+    border-color: #e67e22;
+    background-color: #fdf2e9;
+    color: #cf711f;
+}
+
 .el-calendar-table .el-calendar-day:hover,
 .el-calendar-table td.is-selected {
     background-color: #fdf2e9;
