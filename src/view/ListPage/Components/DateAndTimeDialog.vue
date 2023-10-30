@@ -90,7 +90,7 @@
         </div>
 
         <el-row class="mt16">
-            <el-button @click="repeatDialogVisible=true">重复</el-button>
+            <el-button @click="handleOpenRepeatDialog">重复</el-button>
         </el-row>
 
         <div slot="footer" class="dialog-footer">
@@ -112,10 +112,12 @@
 import TimeItem from "@/view/ListPage/Components/TimeItem.vue";
 import DateItem from "@/view/ListPage/Components/DateItem.vue";
 import RepeatDialog from "@/view/ListPage/Components/RepeatDialog.vue";
+import DateMixin from "@/mixins/FormatDate";
 
 export default {
     name: 'DateAndTimeDialog',
     components: {RepeatDialog, DateItem, TimeItem},
+    mixins: [DateMixin],
 
     props: {
         dateAndTimeDialogVisible: {
@@ -171,7 +173,6 @@ export default {
             },
 
             repeatDialogVisible: false,
-            repeatDialogTitle: 'TODO 选好的日期时间',
         }
     },
 
@@ -328,6 +329,15 @@ export default {
         },
         timeSpentBtnDisabled() {
             return !this.completedTimeVisible;
+        },
+        repeatDialogTitle() {
+            if(this.validateTime()) {
+                if(this.completedDateVisible || this.completedTimeVisible) {
+                    return `开始：${this.formatDate(this.startTime)} ~ 完成：${this.formatDate(this.completedTime)}`
+                }
+                return `开始：${this.formatDate(this.startTime)}`
+            }
+            return ''
         }
     },
 
@@ -335,13 +345,19 @@ export default {
         handlePlanTime(plan) {
             this.$set(this, 'completedTime', new Date(this.startTime.getTime() + plan * 60000));
         },
-        handleDateConfirm() {
+        validateTime() {
             if (this.timeDiff < 0 || (this.completedTime !== null && this.completedTime < this.startTime)) {
                 this.$message({
                     message: '完成时间需大于开始时间',
                     type: "warning"
                 })
-            } else {
+                return false
+            }else {
+                return true
+            }
+        },
+        handleDateConfirm() {
+            if(this.validateTime()) {
                 this.task.dateAndTime.startTime = this.startTime;
                 this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime : null;
                 this.$emit("confirm", this.task.dateAndTime)
@@ -365,6 +381,13 @@ export default {
                 this.$emit("delete")
             }).catch(() => {})
         },
+        handleOpenRepeatDialog() {
+            if(this.validateTime()) {
+                this.repeatDialogVisible = true
+            }else {
+                this.repeatDialogVisible = false
+            }
+        }
     },
 }
 </script>

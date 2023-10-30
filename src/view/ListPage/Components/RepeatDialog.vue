@@ -43,7 +43,7 @@
 
                     <el-option
                             :key="'endRepeatSelectedDate'"
-                            label="与日期"
+                            label="于日期"
                             value="endRepeatSelectedDate"
                     ></el-option>
                 </el-select>
@@ -65,14 +65,14 @@
         </div>
 
         <custom-repeat-dialog :custom-repeat-dialog-visible="customRepeatDialogVisible"
-                              @customRepeatConfirm="customRepeatDialogVisible=false"
+                              @customRepeatConfirm="handleCustomDialogConfirm"
                               @customRepeatCancel="customRepeatDialogVisible=false"
         ></custom-repeat-dialog>
     </el-dialog>
 </template>
 
 <script>
-import CustomRepeatDialog from "@/view/ListPage/Components/customRepeatDialog.vue";
+import CustomRepeatDialog from "@/view/ListPage/Components/CustomRepeatDialog.vue";
 import DateItem from "@/view/ListPage/Components/DateItem.vue";
 
 export default {
@@ -113,8 +113,6 @@ export default {
                 label: '每年'
             }],
 
-            customRepeatDialogVisible: false,
-
             endRepeat: 'never',
             endRepeatOptions: [{
                 value: 'never',
@@ -126,12 +124,15 @@ export default {
             endDateVisible: false,
             endRepeatDate: null,
             pickerOptions: {
-                // TODO 取dateAndTimeDialog的开始日期
+                // TODO 取dateAndTimeDialog的开始日期?
                 disabledDate: time => {
                     const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate())
                     return startOfDay.getTime() < new Date().setHours(0, 0, 0, 0)
                 }
-            }
+            },
+
+            customRepeatDialogVisible: false,
+            customResult: {},
         }
     },
 
@@ -141,16 +142,19 @@ export default {
         this.endRepeatDate = currentDate
     },
 
+    computed: {
+
+    },
+
     watch: {
+        // TODO 从自定义切换为自定义也可以打开dialog
         repeatValue(newValue) {
-            if (newValue == 'never') {
-                this.endRepeatVisible = false
+            if (newValue === 'custom') {
+                this.customRepeatDialogVisible = true;
+                this.endRepeatVisible = true;
             } else {
-                this.endRepeatVisible = true
-            }
-            if (newValue == 'custom') {
-                this.customRepeatDialogVisible = true
-                this.endRepeatVisible = true
+                this.customRepeatDialogVisible = false;
+                this.endRepeatVisible = newValue !== 'never';
             }
         },
 
@@ -170,6 +174,12 @@ export default {
             如果今天完成了，就移动到其他card里面；明天又出现在TO DO card里
         更改一个重复的事项，会提示只更改该事项还是将来的都改
          */
+
+        handleCustomDialogConfirm(customResult) {
+            this.customResult = customResult
+            console.log(this.customResult)
+            this.customRepeatDialogVisible = false
+        },
         handleRepeatConfirm() {
             this.$emit("repeatConfirm")
         },

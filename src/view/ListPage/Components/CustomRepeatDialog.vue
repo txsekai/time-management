@@ -12,8 +12,8 @@
         <el-row>
             <span v-if="frequencyValue=='day'">日程将每{{ numValue }}{{ getFrequencyLabel }}重复一次</span>
             <span v-else-if="frequencyValue=='week'">日程将每{{ numValue }}{{ getFrequencyLabel }}于{{ formattedSelectedWeek(selectedWeek) }}重复</span>
-            <span v-else-if="frequencyValue=='month'">日程将每{{ numValue }}个{{ getFrequencyLabel }}于{{ selectedMonth }}重复</span>
-            <span v-else-if="frequencyValue=='year'">日程将每{{ numValue }}{{ getFrequencyLabel }}于{{ selectedYear }}重复</span>
+            <span v-else-if="frequencyValue=='month'">日程将每{{ numValue }}个{{ getFrequencyLabel }}于{{ formattedSelectedMonth }}重复</span>
+            <span v-else-if="frequencyValue=='year'">日程将每{{ numValue }}{{ getFrequencyLabel }}于{{ formattedSelectedYear }}重复</span>
         </el-row>
 
         <el-row class="mt12">
@@ -77,7 +77,8 @@ export default {
         customRepeatDialogVisible: {
             type: Boolean,
             default: false
-        }
+        },
+
     },
 
     data() {
@@ -126,7 +127,41 @@ export default {
             )
 
             return selectedOption ? selectedOption.label : ''
-        }
+        },
+        formattedSelectedMonth() {
+            const sortedMonth = [...this.selectedMonth].sort((a, b) => a - b)
+
+            const formattedMonth = sortedMonth.map(day => `${day}日`)
+
+            return formattedMonth.join('、 ')
+        },
+        formattedSelectedYear() {
+            const sortedYear = [...this.selectedYear].sort((a, b) => {
+                const monthToNumber = month => {
+                    const monthMap = {
+                        '1月': 1,
+                        '2月': 2,
+                        '3月': 3,
+                        '4月': 4,
+                        '5月': 5,
+                        '6月': 6,
+                        '7月': 7,
+                        '8月': 8,
+                        '9月': 9,
+                        '10月': 10,
+                        '11月': 11,
+                        '12月': 12
+                    }
+                    return monthMap[month]
+                }
+                const numberA = monthToNumber(a)
+                const numberB = monthToNumber(b)
+
+                return numberA - numberB
+            })
+
+            return sortedYear.join('、 ')
+        },
     },
 
     methods: {
@@ -182,17 +217,21 @@ export default {
                 const order = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
                 return order.indexOf(a) - order.indexOf(b)
             })
-            return formattedWeek.join(', ')
+            return formattedWeek.join('、 ')
         },
-        // formattedSelectedMonth(selectedMonth) {
-        //     selectedMonth.sort((a, b) => a - b)
-        //
-        //     const formattedMonth = selectedMonth.map(day => `${day}日`)
-        //
-        //     return formattedMonth.join(', ')
-        // },
         handleConfirm() {
-            this.$emit("customRepeatConfirm")
+            let customResult = {}
+            if(this.frequencyValue === 'day') {
+                customResult = {num: this.numValue, week: null, month: null, year: null}
+            }else if(this.frequencyValue === 'week') {
+                customResult = {num: this.numValue, week: this.selectedWeek, month: null, year: null}
+            }else if(this.frequencyValue === 'month') {
+                customResult = {num: this.numValue, week: null, month: this.selectedMonth, year: null}
+            }else if(this.frequencyValue === 'year') {
+                customResult = {num: this.numValue, week: null, month: null, year: this.selectedYear}
+            }
+
+            this.$emit("customRepeatConfirm", customResult)
         },
         handleCancel() {
             this.$emit("customRepeatCancel")
