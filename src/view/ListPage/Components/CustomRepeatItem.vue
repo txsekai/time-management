@@ -1,19 +1,10 @@
 <template>
-    <el-dialog
-            title="自定义重复"
-            :visible.sync="customRepeatDialogVisible"
-            width="20%"
-            center
-            :show-close="false"
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            append-to-body
-    >
+    <el-row>
         <el-row>
-            <span v-if="frequencyValue=='day'">日程将每{{ numValue }}{{ getFrequencyLabel }}重复一次</span>
-            <span v-else-if="frequencyValue=='week'">日程将每{{ numValue }}{{ getFrequencyLabel }}于{{ formattedSelectedWeek(selectedWeek) }}重复</span>
-            <span v-else-if="frequencyValue=='month'">日程将每{{ numValue }}个{{ getFrequencyLabel }}于{{ formattedSelectedMonth }}重复</span>
-            <span v-else-if="frequencyValue=='year'">日程将每{{ numValue }}{{ getFrequencyLabel }}于{{ formattedSelectedYear }}重复</span>
+            <span v-if="customResult.frequencyValue=='day'">日程将每{{ customResult.num }}{{ getFrequencyLabel }}重复一次</span>
+            <span v-else-if="customResult.frequencyValue=='week'">日程将每{{ customResult.num }}{{ getFrequencyLabel }}{{ formattedSelectedWeek(customResult.week) }}重复</span>
+            <span v-else-if="customResult.frequencyValue=='month'">日程将每{{ customResult.num }}个{{ getFrequencyLabel }}{{ formattedSelectedMonth }}重复</span>
+            <span v-else-if="customResult.frequencyValue=='year'">日程将每{{ customResult.num }}{{ getFrequencyLabel }}{{ formattedSelectedYear }}重复</span>
         </el-row>
 
         <el-row class="mt12">
@@ -21,9 +12,9 @@
                 <span>每</span>
 
                 <!--                TODO 限制必须输入大于等于1的数字-->
-                <el-input v-model="numValue"></el-input>
+                <el-input v-model="customResult.num" @input="handleInput" @blur="handleBlur"></el-input>
 
-                <el-select v-model="frequencyValue">
+                <el-select v-model="customResult.frequencyValue">
                     <el-option
                             v-for="item in frequencyOptions"
                             :key="item.value"
@@ -34,56 +25,51 @@
             </el-col>
         </el-row>
 
-        <el-row class="mt12" v-show="frequencyValue=='week'">
+        <el-row class="mt12" v-show="customResult.frequencyValue=='week'">
             <!--            TODO 把tagDialog里面的tag抽成公共组件？-->
             <el-tag v-for="week in weekOptions"
                     :key="week"
                     class="optionButton"
                     @click="handleSelectOrCancelWeek(week)"
-                    :class="{selected: isSelected(selectedWeek, week)}"
+                    :class="{selected: isSelected(customResult.week, week)}"
             >{{ week }}</el-tag>
         </el-row>
 
-        <div class="mt12 month-grid" v-show="frequencyValue=='month'">
+        <div class="mt12 month-grid" v-show="customResult.frequencyValue=='month'">
             <el-tag v-for="month in monthOptions"
                     :key="month"
                     class="optionButton"
                     @click="handleSelectOrCancelMonth(month)"
-                    :class="{selected: isSelected(selectedMonth, month)}"
+                    :class="{selected: isSelected(customResult.month, month)}"
             >{{ month }}</el-tag>
         </div>
 
-        <div class="mt12 year-grid" v-show="frequencyValue=='year'">
+        <div class="mt12 year-grid" v-show="customResult.frequencyValue=='year'">
             <el-tag v-for="year in yearOptions"
                     :key="year"
                     class="optionButton"
                     @click="handleSelectOrCancelYear(year)"
-                    :class="{selected: isSelected(selectedYear, year)}"
+                    :class="{selected: isSelected(customResult.year, year)}"
             >{{ year }}</el-tag>
         </div>
-
-        <div slot="footer" class="dialog-footer">
-            <el-button class="button-padding" @click="handleConfirm">确认</el-button>
-            <el-button class="button-padding" @click="handleCancel">取消</el-button>
-        </div>
-    </el-dialog>
+    </el-row>
 </template>
 
 <script>
 export default {
-    name: 'customRepeatDialog',
-
+    name: 'customRepeatItem',
     props: {
-        customRepeatDialogVisible: {
-            type: Boolean,
-            default: false
+        customResult: {
+          type: Object,
+          default: function () {
+              return {num: 1, frequencyValue: 'day', week: [], month: [], year: []}
+          }
         },
-
     },
 
     data() {
         return {
-            frequencyValue: 'day',
+            // frequencyValue: 'day',
             frequencyOptions: [
                 {
                     value: 'day',
@@ -100,16 +86,16 @@ export default {
                 },
             ],
 
-            numValue: 1,
+            // numValue: this.customResult.num,
 
             weekOptions: ['日', '一', '二', '三', '四', '五', '六'],
-            selectedWeek: [],
+            // selectedWeek: this.customResult.week,
 
             monthOptions: [],
-            selectedMonth: [],
+            // selectedMonth: this.customResult.months,
 
             yearOptions: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-            selectedYear: [],
+            // selectedYear: this.customResult.year,
         }
     },
 
@@ -123,20 +109,20 @@ export default {
         },
         getFrequencyLabel() {
             const selectedOption = this.frequencyOptions.find(
-                option => option.value === this.frequencyValue
+                option => option.value === this.customResult.frequencyValue
             )
 
             return selectedOption ? selectedOption.label : ''
         },
         formattedSelectedMonth() {
-            const sortedMonth = [...this.selectedMonth].sort((a, b) => a - b)
+            const sortedMonth = [...this.customResult.month].sort((a, b) => a - b)
 
             const formattedMonth = sortedMonth.map(day => `${day}日`)
 
             return formattedMonth.join('、 ')
         },
         formattedSelectedYear() {
-            const sortedYear = [...this.selectedYear].sort((a, b) => {
+            const sortedYear = [...this.customResult.year].sort((a, b) => {
                 const monthToNumber = month => {
                     const monthMap = {
                         '1月': 1,
@@ -193,13 +179,13 @@ export default {
           }
         },
         handleSelectOrCancelWeek(week) {
-          this.handleSelectOrCancel(this.selectedWeek, week)
+          this.handleSelectOrCancel(this.customResult.week, week)
         },
         handleSelectOrCancelMonth(month) {
-            this.handleSelectOrCancel(this.selectedMonth, month)
+            this.handleSelectOrCancel(this.customResult.month, month)
         },
         handleSelectOrCancelYear(year) {
-          this.handleSelectOrCancel(this.selectedYear, year)
+          this.handleSelectOrCancel(this.customResult.year, year)
         },
         formattedSelectedWeek(selectedWeek) {
             const map = {
@@ -219,23 +205,14 @@ export default {
             })
             return formattedWeek.join('、 ')
         },
-        handleConfirm() {
-            let customResult = {}
-            if(this.frequencyValue === 'day') {
-                customResult = {num: this.numValue, week: null, month: null, year: null}
-            }else if(this.frequencyValue === 'week') {
-                customResult = {num: this.numValue, week: this.selectedWeek, month: null, year: null}
-            }else if(this.frequencyValue === 'month') {
-                customResult = {num: this.numValue, week: null, month: this.selectedMonth, year: null}
-            }else if(this.frequencyValue === 'year') {
-                customResult = {num: this.numValue, week: null, month: null, year: this.selectedYear}
+        handleInput() {
+            this.customResult.num  = this.customResult.num.replace(/[^1-9]/g, '')
+        },
+        handleBlur() {
+            if(this.customResult.num == '') {
+                this.customResult.num = 1
             }
-
-            this.$emit("customRepeatConfirm", customResult)
-        },
-        handleCancel() {
-            this.$emit("customRepeatCancel")
-        },
+        }
     },
 }
 </script>

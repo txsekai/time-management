@@ -12,7 +12,7 @@
         <el-row>
             <el-col :span="12">
                 <span>重复</span>
-<!--                TODO 让两列的select对齐。 只能改为el-form是相对简单的？-->
+                <!--                TODO 让两列的select对齐。 只能改为el-form是相对简单的？-->
                 <el-select v-model="repeatValue">
                     <el-option
                             v-for="item in repeatOptions"
@@ -54,30 +54,42 @@
                 <date-item style="margin-left: 1rem"
                            v-model="endRepeatDate"
                            :align="'right'"
-                           :picker-options="pickerOptions"
                 ></date-item>
             </el-col>
         </el-row>
+
+        <custom-repeat-item class="mt36" v-show="repeatValue==='custom'" :custom-result="customResult"></custom-repeat-item>
 
         <div slot="footer" class="dialog-footer">
             <el-button class="button-padding" @click="handleRepeatConfirm">确认</el-button>
             <el-button class="button-padding" @click="handleRepeatCancel">取消</el-button>
         </div>
 
-        <custom-repeat-dialog :custom-repeat-dialog-visible="customRepeatDialogVisible"
-                              @customRepeatConfirm="handleCustomDialogConfirm"
-                              @customRepeatCancel="customRepeatDialogVisible=false"
-        ></custom-repeat-dialog>
     </el-dialog>
 </template>
 
 <script>
-import CustomRepeatDialog from "@/view/ListPage/Components/CustomRepeatDialog.vue";
+import CustomRepeatItem from "@/view/ListPage/Components/CustomRepeatItem.vue";
 import DateItem from "@/view/ListPage/Components/DateItem.vue";
+import {REPEAT_SELECT} from "@/constants/DateSelectorConstants";
 
+/**
+ * task:{
+ *   repeatType: '',
+ *   endRepeat: ''
+ *   repeatEndDate: new Date(),
+ *   customRepeatOption: {
+ *     number: ,
+ *     timeType: ,
+ *     selected: [0,1,2]
+ *   }
+ * }
+ *
+ *
+ */
 export default {
     name: 'RepeatDialog',
-    components: {DateItem, CustomRepeatDialog},
+    components: {DateItem, CustomRepeatItem},
 
     props: {
         repeatDialogVisible: {
@@ -97,7 +109,7 @@ export default {
                 value: 'never',
                 label: '永不'
             }, {
-                value: 'everyday',
+                value: REPEAT_SELECT.EVERYDAY,
                 label: '每天'
             }, {
                 value: 'everyWeek',
@@ -123,16 +135,16 @@ export default {
 
             endDateVisible: false,
             endRepeatDate: null,
-            pickerOptions: {
-                // TODO 取dateAndTimeDialog的开始日期?
-                disabledDate: time => {
-                    const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate())
-                    return startOfDay.getTime() < new Date().setHours(0, 0, 0, 0)
-                }
-            },
+            // pickerOptions: {
+            //     // TODO 取dateAndTimeDialog的开始日期?
+            //     disabledDate: time => {
+            //         const startOfDay = new Date(time.getFullYear(), time.getMonth(), time.getDate())
+            //         return startOfDay.getTime() < new Date().setHours(0, 0, 0, 0)
+            //     }
+            // },
 
-            customRepeatDialogVisible: false,
-            customResult: {},
+            customResult: {num: 1, frequencyValue: 'day', week: [], month: [], year: []},
+            repeatResult: {repeatValue: '', endRepeat: '', endRepeatDate: null, customResult: {}},
         }
     },
 
@@ -142,18 +154,14 @@ export default {
         this.endRepeatDate = currentDate
     },
 
-    computed: {
-
-    },
+    computed: {},
 
     watch: {
         // TODO 从自定义切换为自定义也可以打开dialog
         repeatValue(newValue) {
             if (newValue === 'custom') {
-                this.customRepeatDialogVisible = true;
                 this.endRepeatVisible = true;
             } else {
-                this.customRepeatDialogVisible = false;
                 this.endRepeatVisible = newValue !== 'never';
             }
         },
@@ -175,13 +183,20 @@ export default {
         更改一个重复的事项，会提示只更改该事项还是将来的都改
          */
 
-        handleCustomDialogConfirm(customResult) {
-            this.customResult = customResult
-            console.log(this.customResult)
-            this.customRepeatDialogVisible = false
-        },
         handleRepeatConfirm() {
-            this.$emit("repeatConfirm")
+            let customResult = {}
+            if(this.customResult.frequencyValue === 'day') {
+                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: []}
+            }else if(this.customResult.frequencyValue === 'week') {
+                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: this.customResult.week, month: [], year: []}
+            }else if(this.customResult.frequencyValue === 'month') {
+                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: this.customResult.month, year: []}
+            }else if(this.customResult.frequencyValue === 'year') {
+                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: this.customResult.year}
+            }
+
+            console.log(customResult)
+            this.$emit("repeatConfirm", customResult)
         },
         handleRepeatCancel() {
             this.$emit("repeatCancel")

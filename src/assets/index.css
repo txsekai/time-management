@@ -171,6 +171,10 @@
     margin-top: 2.4rem;
 }
 
+.mt36 {
+    margin-top: 3.6rem;
+}
+
 .el-range-editor.is-active, .el-range-editor.is-active:hover, .el-select .el-input.is-focus .el-input__inner,
 .el-select .el-input__inner:focus{
     border-color: #cf711f;

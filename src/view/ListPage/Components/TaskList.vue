@@ -16,7 +16,13 @@
                         <el-row v-if="task.dateAndTime.startTime">
                             <span>开始：{{ formatDate(task.dateAndTime.startTime) }}</span>
                             <span v-if="task.dateAndTime.completedTime"> ~ </span>
-                            <span v-if="task.dateAndTime.completedTime">完成：{{ formatDate(task.dateAndTime.completedTime) }}</span>
+                            <span v-if="task.dateAndTime.completedTime">完成：{{
+                                formatDate(task.dateAndTime.completedTime)
+                                }}</span>
+                        </el-row>
+
+                        <el-row v-if="task.selectedPriority!==''">
+                            <i v-for="starCount in task.selectedPriority" :key="starCount" class="el-icon-star-on"></i>
                         </el-row>
                     </template>
                     <template v-else>
@@ -24,25 +30,26 @@
                             <el-input id="contentId" v-model="task.content" ref="taskInputs"
                                       @blur="inputBlur(task, index)"
                                       @keyup.native="handleShowSettings(task)"></el-input>
-                            <el-row v-if="showSettings" style="display: flex">
+                            <el-row v-if="showSettings" style="display: flex;align-items: center;">
                                 <el-tooltip content="标签" placement="bottom-start">
                                     <el-button class="setting-icon" icon="el-icon-discount"
                                                @click="openTagDialog(task)"></el-button>
                                 </el-tooltip>
-                                <el-tooltip content="日期" placement="bottom-start">
-                                    <el-button class="setting-icon" icon="el-icon-date"
+                                <el-tooltip content="日期、时间" placement="bottom-start">
+                                    <el-button class="setting-icon" icon="el-icon-time"
                                                @click="openDateAndTimeDialog(task)"></el-button>
                                 </el-tooltip>
-                                <el-tooltip content="时间" placement="bottom-start">
-                                    <el-button class="setting-icon" icon="el-icon-time"></el-button>
-                                </el-tooltip>
-                                <el-tooltip content="重复" placement="bottom-start">
-                                    <!--                                    TODO 点击button打开嵌套dialog-->
-                                    <el-button class="setting-icon" icon="el-icon-refresh"></el-button>
-                                </el-tooltip>
-                                <el-tooltip content="优先级" placement="bottom-start">
-                                    <el-button class="setting-icon" icon="el-icon-star-on"></el-button>
-                                </el-tooltip>
+
+                                <el-dropdown @command="handlePriorityCommand(task, $event)" class="priority-style">
+                                    <el-tooltip content="优先级" placement="bottom-start">
+                                        <el-button class="setting-icon" icon="el-icon-star-on"></el-button>
+                                    </el-tooltip>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item v-for="option in priorityOptions" :key="option.value" :command="option.value">{{ option.label }}
+                                            <i v-for="starCount in option.value" :key="starCount" class="el-icon-star-on"></i>
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
                             </el-row>
                         </div>
                     </template>
@@ -85,15 +92,29 @@ export default {
                 content: '123',
                 editing: false,
                 tags: [],
-                dateAndTime: {startTime: null, completedTime: null}
+                dateAndTime: {startTime: null, completedTime: null},
+                selectedPriority: '',
             }],
             tagDialogVisible: false,
             currentTask: {tags: [], dateAndTime: {startTime: null, completedTime: null}},
             tagsBk: [],
             showSettings: false,
 
+            priorityOptions: [
+                {
+                    value: 3,
+                    label: '高'
+                },{
+                    value: 2,
+                    label: '中'
+                },{
+                    value: 1,
+                    label: '低'
+                },
+            ],
+
             dateAndTimeDialogVisible: false,
-            dateAndTimeBk: {startTime: null, completedTime: null}
+            dateAndTimeBk: {startTime: null, completedTime: null},
         }
     },
 
@@ -104,7 +125,8 @@ export default {
                 content: '',
                 editing: true,
                 tags: [],
-                dateAndTime: {startTime: null, completedTime: null}
+                dateAndTime: {startTime: null, completedTime: null},
+                selectedPriority: '',
             }
 
             this.taskList.push(newTask);
@@ -147,7 +169,10 @@ export default {
         openDateAndTimeDialog(task) {
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
-            this.dateAndTimeBk = Object.assign({},task.dateAndTime)
+            this.dateAndTimeBk = Object.assign({}, task.dateAndTime)
+        },
+        handlePriorityCommand(task, command) {
+            task.selectedPriority = command
         },
     },
 }
@@ -182,6 +207,24 @@ export default {
     border: none;
     padding: 0 0;
     background: none;
+}
+
+.priority-style {
+    margin-left: 1rem;
+    display: flex;
+}
+
+.el-dropdown-menu {
+    padding: 0.5rem 0;
+    border-radius: 11px;
+}
+
+.el-dropdown-menu__item {
+    line-height: 3rem;
+}
+
+.el-dropdown-menu__item, .el-menu-item {
+    padding: 0 1rem;
 }
 
 .tag-row {
