@@ -9,65 +9,65 @@
             :close-on-press-escape="false"
     >
         <!--        TODO 不要这么多row-->
-        <el-row>
-            <el-col :span="12">
-                <span class="content-font-size">开始日期</span>
-            </el-col>
+                <el-row>
+                    <el-col :span="12">
+                        <span class="content-font-size">开始日期</span>
+                    </el-col>
 
-            <el-col :span="12">
-                <span class="content-font-size">完成日期 </span>
-                <el-switch
-                        style="width: 3.6rem"
-                        v-model="completedDateVisible"
-                        active-color="#cf711f"
-                ></el-switch>
-            </el-col>
-        </el-row>
+                    <el-col :span="12">
+                        <span class="content-font-size">完成日期 </span>
+                        <el-switch
+                                style="width: 3.6rem"
+                                v-model="completedDateVisible"
+                                active-color="#cf711f"
+                        ></el-switch>
+                    </el-col>
+                </el-row>
 
-        <el-row class="mt6">
-            <el-col :span="12">
-                <date-item v-model="startTime" :align="'left'"
-                           :picker-options="pickerOptionsStartDate"></date-item>
-            </el-col>
+                <el-row class="mt6">
+                    <el-col :span="12">
+                        <date-item v-model="startTime" :align="'left'"
+                                   :picker-options="pickerOptionsStartDate"></date-item>
+                    </el-col>
 
-            <el-col :span="12" v-show="completedDateVisible">
-                <date-item v-model="completedTime" :align="'right'"
-                           :picker-options="pickerOptionsCompletedDate"></date-item>
-            </el-col>
-        </el-row>
+                    <el-col :span="12" v-show="completedDateVisible">
+                        <date-item v-model="completedTime" :align="'right'"
+                                   :picker-options="pickerOptionsCompletedDate"></date-item>
+                    </el-col>
+                </el-row>
 
-        <el-row class="mt24">
-            <el-col :span="12">
-                <span class="content-font-size">开始时间 </span>
-                <el-switch
-                        style="width: 3.6rem"
-                        v-model="startTimeVisible"
-                        active-color="#cf711f"
-                ></el-switch>
-            </el-col>
+                <el-row class="mt24">
+                    <el-col :span="12">
+                        <span class="content-font-size">开始时间 </span>
+                        <el-switch
+                                style="width: 3.6rem"
+                                v-model="startTimeVisible"
+                                active-color="#cf711f"
+                        ></el-switch>
+                    </el-col>
 
-            <el-col :span="12">
-                <span class="content-font-size">完成时间 </span>
-                <el-switch
-                        style="width: 3.6rem"
-                        v-model="completedTimeVisible"
-                        active-color="#cf711f"
-                ></el-switch>
-            </el-col>
-        </el-row>
+                    <el-col :span="12">
+                        <span class="content-font-size">完成时间 </span>
+                        <el-switch
+                                style="width: 3.6rem"
+                                v-model="completedTimeVisible"
+                                active-color="#cf711f"
+                        ></el-switch>
+                    </el-col>
+                </el-row>
 
-        <el-row class="mt3">
-            <el-col :span="6" v-show="startTimeVisible">
-                <time-item v-model="startTime"></time-item>
-            </el-col>
+                <el-row class="mt3">
+                    <el-col :span="6" v-show="startTimeVisible">
+                        <time-item v-model="startTime"></time-item>
+                    </el-col>
 
-            <el-col v-show="startTimeVisible" :span="6" style="min-height: 1rem"></el-col>
-            <el-col v-show="!startTimeVisible" :span="12" style="min-height: 1rem"></el-col>
+                    <el-col v-show="startTimeVisible" :span="6" style="min-height: 1rem"></el-col>
+                    <el-col v-show="!startTimeVisible" :span="12" style="min-height: 1rem"></el-col>
 
-            <el-col :span="6" v-show="completedTimeVisible">
-                <time-item v-model="completedTime"></time-item>
-            </el-col>
-        </el-row>
+                    <el-col :span="6" v-show="completedTimeVisible">
+                        <time-item v-model="completedTime"></time-item>
+                    </el-col>
+                </el-row>
 
         <el-row class="mt12">
             <el-col :span="24" style="min-height: 1rem">
@@ -331,8 +331,8 @@ export default {
             return !this.completedTimeVisible;
         },
         repeatDialogTitle() {
-            if(this.validateTime()) {
-                if(this.completedDateVisible || this.completedTimeVisible) {
+            if (this.validateTime()) {
+                if (this.completedDateVisible || this.completedTimeVisible) {
                     return `开始：${this.formatDate(this.startTime)} ~ 完成：${this.formatDate(this.completedTime)}`
                 }
                 return `开始：${this.formatDate(this.startTime)}`
@@ -352,12 +352,12 @@ export default {
                     type: "warning"
                 })
                 return false
-            }else {
+            } else {
                 return true
             }
         },
         handleDateConfirm() {
-            if(this.validateTime()) {
+            if (this.validateTime()) {
                 this.task.dateAndTime.startTime = this.startTime;
                 this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime : null;
                 this.$emit("confirm", this.task.dateAndTime)
@@ -379,12 +379,13 @@ export default {
                 this.task.dateAndTime.startTime = this.startTime
                 this.task.dateAndTime.completedTime = this.completedTime
                 this.$emit("delete")
-            }).catch(() => {})
+            }).catch(() => {
+            })
         },
         handleOpenRepeatDialog() {
-            if(this.validateTime()) {
+            if (this.validateTime()) {
                 this.repeatDialogVisible = true
-            }else {
+            } else {
                 this.repeatDialogVisible = false
             }
         }

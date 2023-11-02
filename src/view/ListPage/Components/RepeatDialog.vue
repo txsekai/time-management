@@ -22,7 +22,7 @@
                     ></el-option>
 
                     <el-option
-                            :key="'custom'"
+                            key="custom"
                             label="自定义"
                             value="custom"
                     ></el-option>
@@ -42,7 +42,7 @@
                     ></el-option>
 
                     <el-option
-                            :key="'endRepeatSelectedDate'"
+                            key="endRepeatSelectedDate"
                             label="于日期"
                             value="endRepeatSelectedDate"
                     ></el-option>
@@ -104,31 +104,31 @@ export default {
 
     data() {
         return {
-            repeatValue: 'never',
+            repeatValue: REPEAT_SELECT.NEVER,
             repeatOptions: [{
-                value: 'never',
-                label: '永不'
+                value: REPEAT_SELECT.NEVER,
+                label: REPEAT_SELECT.NEVERLABEL
             }, {
                 value: REPEAT_SELECT.EVERYDAY,
-                label: '每天'
+                label: REPEAT_SELECT.EVERYDAYLABEL
             }, {
-                value: 'everyWeek',
-                label: '每周'
+                value: REPEAT_SELECT.EVERYWEEK,
+                label: REPEAT_SELECT.EVERYWEEKLABEL
             }, {
-                value: 'everyWorkDay',
-                label: '每周工作日'
+                value: REPEAT_SELECT.EVERYWORKDAY,
+                label: REPEAT_SELECT.EVERYWORKDAYLABEL
             }, {
-                value: 'everyMonth',
-                label: '每月'
+                value: REPEAT_SELECT.EVERYMONTH,
+                label: REPEAT_SELECT.EVERYMONTHLABEL
             }, {
-                value: 'everyYear',
-                label: '每年'
+                value: REPEAT_SELECT.EVERYYEAR,
+                label: REPEAT_SELECT.EVERYYEARLABEL
             }],
 
-            endRepeat: 'never',
+            endRepeat: REPEAT_SELECT.NEVER,
             endRepeatOptions: [{
-                value: 'never',
-                label: '永不'
+                value: REPEAT_SELECT.NEVER,
+                label: REPEAT_SELECT.NEVERLABEL
             }],
 
             endRepeatVisible: false,
@@ -162,7 +162,7 @@ export default {
             if (newValue === 'custom') {
                 this.endRepeatVisible = true;
             } else {
-                this.endRepeatVisible = newValue !== 'never';
+                this.endRepeatVisible = newValue !== REPEAT_SELECT.NEVER;
             }
         },
 
