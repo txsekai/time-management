@@ -5,7 +5,7 @@
                 <input style="margin: 0.2rem" type="checkbox" v-model="task.complete"/>
                 <div class="task-detail">
                     <template v-if="!task.editing">
-                        <div class="edit-task" @click="startEditing(task)">{{ task.content }}</div>
+                        <div class="edit-task" @click="startEditing(task, index)">{{ task.content }}</div>
                         <el-row class="tag-row">
                             <el-tag class="tag-group"
                                     v-for="tag in task.tags"
@@ -27,7 +27,7 @@
                     </template>
                     <template v-else>
                         <div class="input-and-settings">
-                            <el-input id="contentId" v-model="task.content" ref="taskInputs"
+                            <el-input :id="'task_input_' + index" v-model="task.content" ref="taskInputs"
                                       @blur="inputBlur(task, index)"
                                       @keyup.native="handleShowSettings(task)"></el-input>
                             <el-row v-if="showSettings" style="display: flex;align-items: center;">
@@ -45,8 +45,10 @@
                                         <el-button class="setting-icon" icon="el-icon-star-on"></el-button>
                                     </el-tooltip>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item v-for="option in priorityOptions" :key="option.value" :command="option.value">{{ option.label }}
-                                            <i v-for="starCount in option.value" :key="starCount" class="el-icon-star-on"></i>
+                                        <el-dropdown-item v-for="option in priorityOptions" :key="option.value"
+                                                          :command="option.value">{{ option.label }}
+                                            <i v-for="starCount in option.value" :key="starCount"
+                                               class="el-icon-star-on"></i>
                                         </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </el-dropdown>
@@ -96,18 +98,18 @@ export default {
                 selectedPriority: '',
             }],
             tagDialogVisible: false,
-            currentTask: {tags: [], dateAndTime: {startTime: null, completedTime: null}},
+            currentTask: {content: '', tags: [], dateAndTime: {startTime: null, completedTime: null}},
             tagsBk: [],
-            showSettings: false,
+            // showSettings: false,
 
             priorityOptions: [
                 {
                     value: 3,
                     label: '高'
-                },{
+                }, {
                     value: 2,
                     label: '中'
-                },{
+                }, {
                     value: 1,
                     label: '低'
                 },
@@ -115,6 +117,12 @@ export default {
 
             dateAndTimeDialogVisible: false,
             dateAndTimeBk: {startTime: null, completedTime: null},
+        }
+    },
+
+    computed: {
+        showSettings() {
+            return this.currentTask.content.length !== 0
         }
     },
 
@@ -128,8 +136,8 @@ export default {
                 dateAndTime: {startTime: null, completedTime: null},
                 selectedPriority: '',
             }
-
             this.taskList.push(newTask);
+            this.currentTask = newTask
 
             this.$nextTick(() => {
                 const inputElements = this.$refs.taskInputs
@@ -138,10 +146,14 @@ export default {
                 lastInputElement.$refs.input.focus();
             })
         },
-        startEditing(task) {
+        startEditing(task, index) {
             task.editing = true
+
+            this.currentTask = task
+
+
             this.$nextTick(() => {
-                document.getElementById('contentId').focus()
+                document.getElementById('task_input_' + index).focus()
             });
         },
         inputBlur(task, index) {
@@ -154,11 +166,7 @@ export default {
             }
         },
         handleShowSettings(task) {
-            if (task.content.length !== 0) {
-                this.showSettings = true
-            } else {
-                this.showSettings = false
-            }
+            this.currentTask = task
         },
         openTagDialog(task) {
             // TODO 定义共同openDialog的方法
