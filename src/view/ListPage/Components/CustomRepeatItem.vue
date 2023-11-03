@@ -18,8 +18,6 @@
         <el-row class="mt12">
             <el-col :span="12">
                 <span>每</span>
-
-                <!--                TODO 限制必须输入大于等于1的数字-->
                 <el-input v-model="customResult.num" @input="handleInput" @blur="handleBlur"></el-input>
 
                 <el-select v-model="customResult.frequencyValue">
@@ -39,7 +37,7 @@
                     :key="index"
                     class="optionButton"
                     @click="handleSelectOrCancelWeek(index + 1)"
-                    :class="{selected: isSelected(customResult.week, index + 1)}"
+                    :class="{selected: isSelected(customResult.selectedItem, index + 1)}"
             >{{ week }}
             </el-tag>
         </el-row>
@@ -49,7 +47,7 @@
                     :key="month"
                     class="optionButton"
                     @click="handleSelectOrCancelMonth(month)"
-                    :class="{selected: isSelected(customResult.month, month)}"
+                    :class="{selected: isSelected(customResult.selectedItem, month)}"
             >{{ month }}
             </el-tag>
         </div>
@@ -59,7 +57,7 @@
                     :key="year"
                     class="optionButton"
                     @click="handleSelectOrCancelYear(year)"
-                    :class="{selected: isSelected(customResult.year, year)}"
+                    :class="{selected: isSelected(customResult.selectedItem, year)}"
             >{{ year }}
             </el-tag>
         </div>
@@ -73,14 +71,13 @@ export default {
         customResult: {
             type: Object,
             default: function () {
-                return {num: 1, frequencyValue: 'day', week: [], month: [], year: []}
+                return {num: 1, frequencyValue: 'day', selectedItem: []}
             }
         },
     },
 
     data() {
         return {
-            // frequencyValue: 'day',
             frequencyOptions: [
                 {
                     value: 'day',
@@ -111,9 +108,20 @@ export default {
         this.initYearOptions()
     },
 
+    watch: {
+        customResult: {
+            handler(newValue) {
+                if (newValue.frequencyValue) {
+                    newValue.selectedItem = []
+                }
+            },
+            deep: true
+        }
+    },
+
     computed: {
-        isSelected() {
-            return (selectionArray, item) => selectionArray.includes(item)
+        isSelected(selectionArray, item) {
+            return selectionArray.includes(item);
         },
         getFrequencyLabel() {
             const selectedOption = this.frequencyOptions.find(
@@ -123,20 +131,20 @@ export default {
             return selectedOption ? selectedOption.label : ''
         },
         formattedSelectedWeek() {
-            const sortedWeek = [...this.customResult.week].sort((a, b) => a - b)
+            const sortedWeek = [...this.customResult.selectedItem].sort((a, b) => a - b)
             let formattedWeek = this.formattedShowWeek(sortedWeek)
             formattedWeek = formattedWeek.map(week => `星期${week}`)
             return formattedWeek.join('、 ')
         },
         formattedSelectedMonth() {
-            const sortedMonth = [...this.customResult.month].sort((a, b) => a - b)
+            const sortedMonth = [...this.customResult.selectedItem].sort((a, b) => a - b)
 
             const formattedMonth = sortedMonth.map(day => `${day}日`)
 
             return formattedMonth.join('、 ')
         },
         formattedSelectedYear() {
-            const sortedYear = [...this.customResult.year].sort((a, b) => a - b)
+            const sortedYear = [...this.customResult.selectedItem].sort((a, b) => a - b)
 
             const formattedYear = sortedYear.map(month => `${month}月`)
 
@@ -187,13 +195,13 @@ export default {
             }
         },
         handleSelectOrCancelWeek(index) {
-            this.handleSelectOrCancel(this.customResult.week, index)
+            this.handleSelectOrCancel(this.customResult.selectedItem, index)
         },
         handleSelectOrCancelMonth(month) {
-            this.handleSelectOrCancel(this.customResult.month, month)
+            this.handleSelectOrCancel(this.customResult.selectedItem, month)
         },
         handleSelectOrCancelYear(year) {
-            this.handleSelectOrCancel(this.customResult.year, year)
+            this.handleSelectOrCancel(this.customResult.selectedItem, year)
         },
         handleInput() {
             this.customResult.num = this.customResult.num.replace(/[^1-9]/g, '')

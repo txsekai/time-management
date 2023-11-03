@@ -143,7 +143,7 @@ export default {
             //     }
             // },
 
-            customResult: {num: 1, frequencyValue: 'day', week: [], month: [], year: []},
+            customResult: {num: 1, frequencyValue: 'day', selectedItem: []},
             repeatResult: {repeatValue: '', endRepeat: '', endRepeatDate: null, customResult: {}},
         }
     },
@@ -184,19 +184,19 @@ export default {
          */
 
         handleRepeatConfirm() {
-            let customResult = {}
-            if(this.customResult.frequencyValue === 'day') {
-                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: []}
-            }else if(this.customResult.frequencyValue === 'week') {
-                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: this.customResult.week, month: [], year: []}
-            }else if(this.customResult.frequencyValue === 'month') {
-                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: this.customResult.month, year: []}
-            }else if(this.customResult.frequencyValue === 'year') {
-                customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: this.customResult.year}
-            }
-
-            console.log(customResult)
-            this.$emit("repeatConfirm", customResult)
+            // let customResult = {}
+            // if(this.customResult.frequencyValue === 'day') {
+            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: []}
+            // }else if(this.customResult.frequencyValue === 'week') {
+            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: this.customResult.week, month: [], year: []}
+            // }else if(this.customResult.frequencyValue === 'month') {
+            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: this.customResult.month, year: []}
+            // }else if(this.customResult.frequencyValue === 'year') {
+            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: this.customResult.year}
+            // }
+            //
+            // console.log(customResult)
+            // this.$emit("repeatConfirm", customResult)
         },
         handleRepeatCancel() {
             this.$emit("repeatCancel")
