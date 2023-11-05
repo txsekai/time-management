@@ -58,7 +58,8 @@
             </el-col>
         </el-row>
 
-        <custom-repeat-item class="mt36" v-show="repeatValue==='custom'" :custom-result="customResult"></custom-repeat-item>
+        <custom-repeat-item class="mt36" v-show="repeatValue==='custom'"
+                            :custom-result="customResult"></custom-repeat-item>
 
         <div slot="footer" class="dialog-footer">
             <el-button class="button-padding" @click="handleRepeatConfirm">确认</el-button>
@@ -99,6 +100,12 @@ export default {
         title: {
             type: String,
             default: '请设置重复'
+        },
+        repeatResult: {
+            type: Object,
+            default: function () {
+                return {repeatValue: '', endRepeat: '', endRepeatDate: null, customResult: {}}
+            }
         },
     },
 
@@ -143,15 +150,11 @@ export default {
             //     }
             // },
 
-            customResult: {num: 1, frequencyValue: 'day', selectedItem: []},
-            repeatResult: {repeatValue: '', endRepeat: '', endRepeatDate: null, customResult: {}},
+            customResult: {setCustomRepeat: false, num: 1, frequencyValue: 'day', selectedItem: []},
         }
     },
 
     created() {
-        const currentDate = new Date()
-        currentDate.setDate(currentDate.getDate() + 7)
-        this.endRepeatDate = currentDate
     },
 
     computed: {},
@@ -167,10 +170,15 @@ export default {
         },
 
         endRepeat(newValue) {
-            if (newValue == 'endRepeatSelectedDate') {
+            if(newValue === 'endRepeatSelectedDate') {
                 this.endDateVisible = true
-            } else {
+
+                const currentDate = new Date()
+                currentDate.setDate(currentDate.getDate() + 7)
+                this.endRepeatDate = currentDate
+            }else {
                 this.endDateVisible = false
+                this.endRepeatDate = null
             }
         }
     },
@@ -184,19 +192,15 @@ export default {
          */
 
         handleRepeatConfirm() {
-            // let customResult = {}
-            // if(this.customResult.frequencyValue === 'day') {
-            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: []}
-            // }else if(this.customResult.frequencyValue === 'week') {
-            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: this.customResult.week, month: [], year: []}
-            // }else if(this.customResult.frequencyValue === 'month') {
-            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: this.customResult.month, year: []}
-            // }else if(this.customResult.frequencyValue === 'year') {
-            //     customResult = {num: this.customResult.num, frequencyValue: this.customResult.frequencyValue, week: [], month: [], year: this.customResult.year}
-            // }
-            //
-            // console.log(customResult)
-            // this.$emit("repeatConfirm", customResult)
+            this.customResult = {
+                ...this.customResult,
+                setCustomRepeat: this.repeatValue === 'custom',
+            }
+            
+            const {repeatValue, endRepeat, endRepeatDate, customResult} = this
+            const repeatResult = {repeatValue, endRepeat, endRepeatDate, customResult}
+            console.log(repeatResult)
+            this.$emit("repeatConfirm", repeatResult)
         },
         handleRepeatCancel() {
             this.$emit("repeatCancel")

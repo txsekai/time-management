@@ -91,6 +91,7 @@
 
         <el-row class="mt16">
             <el-button @click="handleOpenRepeatDialog">重复</el-button>
+            <div>{{ repeatResult }}</div>
         </el-row>
 
         <div slot="footer" class="dialog-footer">
@@ -101,9 +102,10 @@
             <el-button class="button-padding" @click="handleDateCancel">取消</el-button>
         </div>
 
-        <repeat-dialog :repeat-dialog-visible="repeatDialogVisible" @repeatConfirm="repeatDialogVisible=false"
+        <repeat-dialog :repeat-dialog-visible="repeatDialogVisible" @repeatConfirm="handleRepeatConfirm"
                        @repeatCancel="repeatDialogVisible=false"
                        :title="repeatDialogTitle"
+                       :repeat-result="repeatResult"
         ></repeat-dialog>
     </el-dialog>
 </template>
@@ -135,7 +137,7 @@ export default {
             default: function () {
                 return {startTime: null, completedTime: null}
             }
-        }
+        },
     },
 
     data() {
@@ -173,6 +175,7 @@ export default {
             },
 
             repeatDialogVisible: false,
+            repeatResult: {repeatValue: '', endRepeat: '', endRepeatDate: null, customResult: {}}
         }
     },
 
@@ -388,6 +391,10 @@ export default {
             } else {
                 this.repeatDialogVisible = false
             }
+        },
+        handleRepeatConfirm(repeatResult) {
+            this.repeatDialogVisible = false
+            this.repeatResult = repeatResult
         }
     },
 }

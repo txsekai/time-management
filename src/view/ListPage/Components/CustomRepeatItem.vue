@@ -1,18 +1,11 @@
 <template>
     <el-row>
         <el-row>
-            <span v-if="customResult.frequencyValue=='day'">日程将每{{ customResult.num }}{{
-                getFrequencyLabel
-                }}重复一次</span>
-            <span v-else-if="customResult.frequencyValue=='week'">日程将每{{ customResult.num }}{{
-                getFrequencyLabel
-                }}{{ formattedSelectedWeek }}重复</span>
-            <span v-else-if="customResult.frequencyValue=='month'">日程将每{{ customResult.num }}个{{
-                getFrequencyLabel
-                }}{{ formattedSelectedMonth }}重复</span>
-            <span v-else-if="customResult.frequencyValue=='year'">日程将每{{ customResult.num }}{{
-                getFrequencyLabel
-                }}{{ formattedSelectedYear }}重复</span>
+            <span>日程将每{{
+                customResult.num
+                }}{{ customResult.frequencyValue == 'month' ? '个' : '' }}{{ getFrequencyLabel }}{{
+                formattedSelectedLabel
+                }}重复</span>
         </el-row>
 
         <el-row class="mt12">
@@ -36,8 +29,8 @@
             <el-tag v-for="(week, index) in formattedShowWeek(weekOptions)"
                     :key="index"
                     class="optionButton"
-                    @click="handleSelectOrCancelWeek(index + 1)"
-                    :class="{selected: isSelected(customResult.selectedItem, index + 1)}"
+                    @click="handleSelectOrCancelWeek(index)"
+                    :class="{selected: isSelected(customResult.selectedItem, index)}"
             >{{ week }}
             </el-tag>
         </el-row>
@@ -48,7 +41,7 @@
                     class="optionButton"
                     @click="handleSelectOrCancelMonth(month)"
                     :class="{selected: isSelected(customResult.selectedItem, month)}"
-            >{{ month }}
+            >{{ month + 1 }}
             </el-tag>
         </div>
 
@@ -58,20 +51,24 @@
                     class="optionButton"
                     @click="handleSelectOrCancelYear(year)"
                     :class="{selected: isSelected(customResult.selectedItem, year)}"
-            >{{ year }}
+            >{{ year + 1 }}
             </el-tag>
         </div>
     </el-row>
 </template>
 
 <script>
+import RepeatMixin from "@/mixins/FormatRepeat";
+
 export default {
     name: 'customRepeatItem',
+    mixins: [RepeatMixin],
+
     props: {
         customResult: {
             type: Object,
             default: function () {
-                return {num: 1, frequencyValue: 'day', selectedItem: []}
+                return {setCustomRepeat: false, num: 1, frequencyValue: 'day', selectedItem: []}
             }
         },
     },
@@ -109,20 +106,14 @@ export default {
     },
 
     watch: {
-        customResult: {
-            handler(newValue) {
-                if (newValue.frequencyValue) {
-                    newValue.selectedItem = []
-                }
-            },
-            deep: true
+        'customResult.frequencyValue'() {
+            while (this.customResult.selectedItem.length > 0) {
+                this.customResult.selectedItem.pop();
+            }
         }
     },
 
     computed: {
-        isSelected(selectionArray, item) {
-            return selectionArray.includes(item);
-        },
         getFrequencyLabel() {
             const selectedOption = this.frequencyOptions.find(
                 option => option.value === this.customResult.frequencyValue
@@ -130,49 +121,52 @@ export default {
 
             return selectedOption ? selectedOption.label : ''
         },
-        formattedSelectedWeek() {
-            const sortedWeek = [...this.customResult.selectedItem].sort((a, b) => a - b)
-            let formattedWeek = this.formattedShowWeek(sortedWeek)
-            formattedWeek = formattedWeek.map(week => `星期${week}`)
-            return formattedWeek.join('、 ')
+        formattedSelectedLabel() {
+            return this.formattedSelectedLabel(this.customResult.selectedItem, this.customResult.frequencyValue)
         },
-        formattedSelectedMonth() {
-            const sortedMonth = [...this.customResult.selectedItem].sort((a, b) => a - b)
 
-            const formattedMonth = sortedMonth.map(day => `${day}日`)
-
-            return formattedMonth.join('、 ')
-        },
-        formattedSelectedYear() {
-            const sortedYear = [...this.customResult.selectedItem].sort((a, b) => a - b)
-
-            const formattedYear = sortedYear.map(month => `${month}月`)
-
-            return formattedYear.join('、 ')
-        },
+        // formattedSelectedLabel() {
+        //     const sortedIndex = [...this.customResult.selectedItem].sort((a, b) => a - b)
+        //     switch (this.customResult.frequencyValue) {
+        //         case 'week':
+        //             return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、 ');
+        //         case 'month':
+        //             return sortedIndex.map(day => `${day + 1}日`).join('、 ')
+        //         case 'year':
+        //             return sortedIndex.map(month => `${month + 1}月`).join('、 ')
+        //         default:
+        //             return null;
+        //     }
+        // },
     },
 
     methods: {
         /*
         TODO 如果选择的自定义可以在预设里面找到，联动到预设
          */
-
+        isSelected(selectionArray, item) {
+            return selectionArray.includes(item);
+        },
         initWeekOptions() {
-            for (let i = 1; i <= 7; i++) {
+            for (let i = 0; i <= 6; i++) {
                 this.weekOptions.push(i)
             }
         },
-        formattedShowWeek(weekOptions) {
-            const weekDays = ['一', '二', '三', '四', '五', '六', '日']
-            return weekOptions.map(option => weekDays[option - 1])
+        formattedShowWeek() {
+            return this.formattedShowWeek(this.weekOptions)
         },
+        // formattedShowWeek(weekOptions) {
+        //     const weekDays = ['一', '二', '三', '四', '五', '六', '日']
+        //     return weekOptions.map(option => weekDays[option])
+        // },
+
         initMonthOptions() {
-            for (let i = 1; i <= 31; i++) {
+            for (let i = 0; i <= 30; i++) {
                 this.monthOptions.push(i)
             }
         },
         initYearOptions() {
-            for (let i = 1; i <= 12; i++) {
+            for (let i = 0; i <= 11; i++) {
                 this.yearOptions.push(i)
             }
         },
