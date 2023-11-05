@@ -1,8 +1,8 @@
 const RepeatMixin = {
     computed: {
-        formattedSelectedLabel(selectedItem, frequencyValue) {
-            const sortedIndex = [...selectedItem].sort((a, b) => a - b)
-            switch (frequencyValue) {
+        formattedSelectedLabel() {
+            const sortedIndex = [...this.customResult.selectedItem].sort((a, b) => a - b)
+            switch (this.customResult.frequencyValue) {
                 case 'week':
                     return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、 ');
                 case 'month':

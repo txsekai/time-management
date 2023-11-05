@@ -3,7 +3,7 @@
         <el-row>
             <span>日程将每{{
                 customResult.num
-                }}{{ customResult.frequencyValue == 'month' ? '个' : '' }}{{ getFrequencyLabel }}{{
+                }}{{ customResult.frequencyValue == REPEAT_SELECT.MONTH ? '个' : '' }}{{ getFrequencyLabel }}{{
                 formattedSelectedLabel
                 }}重复</span>
         </el-row>
@@ -24,31 +24,31 @@
             </el-col>
         </el-row>
 
-        <el-row class="mt12" v-show="customResult.frequencyValue=='week'">
+        <el-row class="mt12" v-show="customResult.frequencyValue==REPEAT_SELECT.WEEK">
             <!--            TODO 把tagDialog里面的tag抽成公共组件？-->
             <el-tag v-for="(week, index) in formattedShowWeek(weekOptions)"
                     :key="index"
-                    class="optionButton"
+                    class="option-button user-select-none"
                     @click="handleSelectOrCancelWeek(index)"
                     :class="{selected: isSelected(customResult.selectedItem, index)}"
             >{{ week }}
             </el-tag>
         </el-row>
 
-        <div class="mt12 month-grid" v-show="customResult.frequencyValue=='month'">
+        <div class="mt12 month-grid" v-show="customResult.frequencyValue==REPEAT_SELECT.MONTH">
             <el-tag v-for="month in monthOptions"
                     :key="month"
-                    class="optionButton"
+                    class="option-button user-select-none"
                     @click="handleSelectOrCancelMonth(month)"
                     :class="{selected: isSelected(customResult.selectedItem, month)}"
             >{{ month + 1 }}
             </el-tag>
         </div>
 
-        <div class="mt12 year-grid" v-show="customResult.frequencyValue=='year'">
+        <div class="mt12 year-grid" v-show="customResult.frequencyValue==REPEAT_SELECT.YEAR">
             <el-tag v-for="year in yearOptions"
                     :key="year"
-                    class="optionButton"
+                    class="option-button user-select-none"
                     @click="handleSelectOrCancelYear(year)"
                     :class="{selected: isSelected(customResult.selectedItem, year)}"
             >{{ year + 1 }}
@@ -59,6 +59,7 @@
 
 <script>
 import RepeatMixin from "@/mixins/FormatRepeat";
+import {convertLabel, REPEAT_SELECT} from "@/constants/DateSelectorConstants";
 
 export default {
     name: 'customRepeatItem',
@@ -67,9 +68,6 @@ export default {
     props: {
         customResult: {
             type: Object,
-            default: function () {
-                return {setCustomRepeat: false, num: 1, frequencyValue: 'day', selectedItem: []}
-            }
         },
     },
 
@@ -77,17 +75,17 @@ export default {
         return {
             frequencyOptions: [
                 {
-                    value: 'day',
-                    label: '天'
+                    value: REPEAT_SELECT.DAY,
+                    label: convertLabel(REPEAT_SELECT.DAY)
                 }, {
-                    value: 'week',
-                    label: '周'
+                    value: REPEAT_SELECT.WEEK,
+                    label: convertLabel(REPEAT_SELECT.WEEK)
                 }, {
-                    value: 'month',
-                    label: '月'
+                    value: REPEAT_SELECT.MONTH,
+                    label: convertLabel(REPEAT_SELECT.MONTH)
                 }, {
-                    value: 'year',
-                    label: '年'
+                    value: REPEAT_SELECT.YEAR,
+                    label: convertLabel(REPEAT_SELECT.YEAR)
                 },
             ],
 
@@ -114,6 +112,9 @@ export default {
     },
 
     computed: {
+        REPEAT_SELECT() {
+            return REPEAT_SELECT
+        },
         getFrequencyLabel() {
             const selectedOption = this.frequencyOptions.find(
                 option => option.value === this.customResult.frequencyValue
@@ -121,23 +122,6 @@ export default {
 
             return selectedOption ? selectedOption.label : ''
         },
-        formattedSelectedLabel() {
-            return this.formattedSelectedLabel(this.customResult.selectedItem, this.customResult.frequencyValue)
-        },
-
-        // formattedSelectedLabel() {
-        //     const sortedIndex = [...this.customResult.selectedItem].sort((a, b) => a - b)
-        //     switch (this.customResult.frequencyValue) {
-        //         case 'week':
-        //             return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、 ');
-        //         case 'month':
-        //             return sortedIndex.map(day => `${day + 1}日`).join('、 ')
-        //         case 'year':
-        //             return sortedIndex.map(month => `${month + 1}月`).join('、 ')
-        //         default:
-        //             return null;
-        //     }
-        // },
     },
 
     methods: {
@@ -152,14 +136,6 @@ export default {
                 this.weekOptions.push(i)
             }
         },
-        formattedShowWeek() {
-            return this.formattedShowWeek(this.weekOptions)
-        },
-        // formattedShowWeek(weekOptions) {
-        //     const weekDays = ['一', '二', '三', '四', '五', '六', '日']
-        //     return weekOptions.map(option => weekDays[option])
-        // },
-
         initMonthOptions() {
             for (let i = 0; i <= 30; i++) {
                 this.monthOptions.push(i)
@@ -238,7 +214,7 @@ export default {
     line-height: 2.5rem;
 }
 
-.optionButton {
+.option-button {
     border-radius: 2rem;
 }
 

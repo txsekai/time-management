@@ -22,9 +22,9 @@
                     ></el-option>
 
                     <el-option
-                            key="custom"
-                            label="自定义"
-                            value="custom"
+                            :key="REPEAT_SELECT.CUSTOM"
+                            :label="convertLabel(REPEAT_SELECT.CUSTOM)"
+                            :value="REPEAT_SELECT.CUSTOM"
                     ></el-option>
                 </el-select>
             </el-col>
@@ -42,9 +42,9 @@
                     ></el-option>
 
                     <el-option
-                            key="endRepeatSelectedDate"
-                            label="于日期"
-                            value="endRepeatSelectedDate"
+                            :key="REPEAT_SELECT.ENDREPEATSELECTEDDATE"
+                            :label="convertLabel(REPEAT_SELECT.ENDREPEATSELECTEDDATE)"
+                            :value="REPEAT_SELECT.ENDREPEATSELECTEDDATE"
                     ></el-option>
                 </el-select>
             </el-col>
@@ -58,7 +58,7 @@
             </el-col>
         </el-row>
 
-        <custom-repeat-item class="mt36" v-show="repeatValue==='custom'"
+        <custom-repeat-item class="mt36" v-if="repeatValue===REPEAT_SELECT.CUSTOM"
                             :custom-result="customResult"></custom-repeat-item>
 
         <div slot="footer" class="dialog-footer">
@@ -72,22 +72,8 @@
 <script>
 import CustomRepeatItem from "@/view/ListPage/Components/CustomRepeatItem.vue";
 import DateItem from "@/view/ListPage/Components/DateItem.vue";
-import {REPEAT_SELECT} from "@/constants/DateSelectorConstants";
+import {convertLabel, REPEAT_SELECT} from "@/constants/DateSelectorConstants";
 
-/**
- * task:{
- *   repeatType: '',
- *   endRepeat: ''
- *   repeatEndDate: new Date(),
- *   customRepeatOption: {
- *     number: ,
- *     timeType: ,
- *     selected: [0,1,2]
- *   }
- * }
- *
- *
- */
 export default {
     name: 'RepeatDialog',
     components: {DateItem, CustomRepeatItem},
@@ -114,28 +100,28 @@ export default {
             repeatValue: REPEAT_SELECT.NEVER,
             repeatOptions: [{
                 value: REPEAT_SELECT.NEVER,
-                label: REPEAT_SELECT.NEVERLABEL
+                label: convertLabel(REPEAT_SELECT.NEVER)
             }, {
                 value: REPEAT_SELECT.EVERYDAY,
-                label: REPEAT_SELECT.EVERYDAYLABEL
+                label: convertLabel(REPEAT_SELECT.EVERYDAY)
             }, {
                 value: REPEAT_SELECT.EVERYWEEK,
-                label: REPEAT_SELECT.EVERYWEEKLABEL
+                label: convertLabel(REPEAT_SELECT.EVERYWEEK)
             }, {
                 value: REPEAT_SELECT.EVERYWORKDAY,
-                label: REPEAT_SELECT.EVERYWORKDAYLABEL
+                label: convertLabel(REPEAT_SELECT.EVERYWORKDAY)
             }, {
                 value: REPEAT_SELECT.EVERYMONTH,
-                label: REPEAT_SELECT.EVERYMONTHLABEL
+                label: convertLabel(REPEAT_SELECT.EVERYMONTH)
             }, {
                 value: REPEAT_SELECT.EVERYYEAR,
-                label: REPEAT_SELECT.EVERYYEARLABEL
+                label: convertLabel(REPEAT_SELECT.EVERYYEAR)
             }],
 
             endRepeat: REPEAT_SELECT.NEVER,
             endRepeatOptions: [{
                 value: REPEAT_SELECT.NEVER,
-                label: REPEAT_SELECT.NEVERLABEL
+                label: convertLabel(REPEAT_SELECT.NEVER)
             }],
 
             endRepeatVisible: false,
@@ -150,27 +136,35 @@ export default {
             //     }
             // },
 
-            customResult: {setCustomRepeat: false, num: 1, frequencyValue: 'day', selectedItem: []},
+            customResult: {num: null, frequencyValue: null, selectedItem: null},
         }
     },
 
     created() {
     },
 
-    computed: {},
+    computed: {
+        REPEAT_SELECT() {
+            return REPEAT_SELECT
+        }
+    },
 
     watch: {
         // TODO 从自定义切换为自定义也可以打开dialog
         repeatValue(newValue) {
-            if (newValue === 'custom') {
+            if (newValue === REPEAT_SELECT.CUSTOM) {
                 this.endRepeatVisible = true;
+
+                this.customResult = {num: 1, frequencyValue: 'day', selectedItem: []}
             } else {
                 this.endRepeatVisible = newValue !== REPEAT_SELECT.NEVER;
+
+                this.customResult = {num: null, frequencyValue: null, selectedItem: null}
             }
         },
 
         endRepeat(newValue) {
-            if(newValue === 'endRepeatSelectedDate') {
+            if(newValue === REPEAT_SELECT.ENDREPEATSELECTEDDATE) {
                 this.endDateVisible = true
 
                 const currentDate = new Date()
@@ -184,6 +178,7 @@ export default {
     },
 
     methods: {
+        convertLabel,
         /*TODO
         重复设置按照：把有打开的开始日期、时间+完成日期、时间当做一个整体来循环
         在重复的时间内，该事项一直展示在TO DO card里
@@ -192,11 +187,6 @@ export default {
          */
 
         handleRepeatConfirm() {
-            this.customResult = {
-                ...this.customResult,
-                setCustomRepeat: this.repeatValue === 'custom',
-            }
-            
             const {repeatValue, endRepeat, endRepeatDate, customResult} = this
             const repeatResult = {repeatValue, endRepeat, endRepeatDate, customResult}
             console.log(repeatResult)

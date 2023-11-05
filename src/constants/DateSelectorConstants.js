@@ -1,19 +1,38 @@
 export const REPEAT_SELECT = {
     NEVER: 'never',
-    NEVERLABEL: '永不',
-
     EVERYDAY: 'everyDay',
-    EVERYDAYLABEL: '每天',
-
     EVERYWEEK: 'everyWeek',
-    EVERYWEEKLABEL: '每周',
-
     EVERYWORKDAY: 'everyWorkDay',
-    EVERYWORKDAYLABEL: '每周工作日',
-
     EVERYMONTH: 'everyMonth',
-    EVERYMONTHLABEL: '每月',
-
     EVERYYEAR: 'everyYear',
-    EVERYYEARLABEL: '每年',
+    CUSTOM: 'custom',
+
+    ENDREPEATSELECTEDDATE: 'endRepeatSelectedDate',
+
+    DAY: 'day',
+    WEEK: 'week',
+    MONTH: 'month',
+    YEAR: 'year',
 }
+
+export function convertLabel(key){
+    let dict = {
+        never:'永不',
+        everyDay:'每天',
+        everyWeek: '每周',
+        everyWorkDay: '每周工作日',
+        everyMonth: '每月',
+        everyYear: '每年',
+        custom: '自定义',
+
+        endRepeatSelectedDate: '于日期',
+
+        day: '天',
+        week: '周',
+        month: '月',
+        year: '年',
+    }
+    return dict[key]
+}
+
+// TODO 1. 改成字典 2. customRepeatItem里面常量也定义到这里 3. user-select:none

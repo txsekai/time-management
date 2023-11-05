@@ -231,3 +231,7 @@
 .dialog-footer {
     text-align: right;
 }
+
+.user-select-none {
+    user-select: none;
+}
