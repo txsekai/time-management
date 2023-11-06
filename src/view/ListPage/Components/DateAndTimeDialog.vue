@@ -91,7 +91,7 @@
 
         <el-row class="mt24">
             <el-button @click="handleOpenRepeatDialog">重复</el-button>
-            <el-row class="mt8" v-html="formattedRepeatResult(repeatResult)"></el-row>
+            <el-row class="mt8" v-html="formattedRepeatResult(localRepeatResult)"></el-row>
         </el-row>
 
         <div slot="footer" class="dialog-footer">
@@ -105,7 +105,7 @@
         <repeat-dialog :repeat-dialog-visible="repeatDialogVisible" @repeatConfirm="handleRepeatConfirm"
                        @repeatCancel="repeatDialogVisible=false"
                        :title="repeatDialogTitle"
-                       :repeat-result="repeatResult"
+                       :repeat-result="localRepeatResult"
         ></repeat-dialog>
     </el-dialog>
 </template>
@@ -179,7 +179,12 @@ export default {
             },
 
             repeatDialogVisible: false,
+            localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
         }
+    },
+
+    created() {
+        this.localRepeatResult = this.repeatResult
     },
 
     watch: {
@@ -297,6 +302,9 @@ export default {
                 }
             }
         },
+        repeatResult(val) {
+            this.localRepeatResult = val
+        },
     },
 
     computed: {
@@ -366,13 +374,13 @@ export default {
             if (this.validateTime()) {
                 this.task.dateAndTime.startTime = this.startTime;
                 this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime : null;
-                this.$emit("confirm", this.task.dateAndTime)
+                this.$emit("dateConfirm", this.task.dateAndTime, this.localRepeatResult)
             }
         },
         handleDateCancel() {
             this.task.dateAndTime.startTime = this.dateAndTimeBk.startTime
             this.task.dateAndTime.completedTime = this.dateAndTimeBk.completedTime
-            this.$emit("cancel")
+            this.$emit("dateCancel")
         },
         handleDateDelete() {
             this.$confirm("确认要删除日程吗？", "确认", {
@@ -395,9 +403,9 @@ export default {
                 this.repeatDialogVisible = false
             }
         },
-        handleRepeatConfirm(repeatResult) {
+        handleRepeatConfirm(localRepeatResult) {
             this.repeatDialogVisible = false
-            this.repeatResult = repeatResult
+            this.localRepeatResult = localRepeatResult
         },
     },
 }

@@ -134,10 +134,12 @@ export default {
             // },
 
             customResult: {num: null, frequencyValue: null, selectedItem: null},
+            localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
         }
     },
 
     created() {
+        this.localRepeatResult = this.repeatResult
     },
 
     computed: {
@@ -151,6 +153,9 @@ export default {
      */
 
     watch: {
+        repeatResult(val) {
+            this.localRepeatResult = val
+        },
         // TODO 从自定义切换为自定义也可以打开dialog
         repeatValue(newValue) {
             if (newValue === REPEAT_SELECT.CUSTOM) {
@@ -190,9 +195,8 @@ export default {
 
         handleConfirm() {
             const {repeatValue, endRepeat, endRepeatDate, customResult} = this
-            const repeatResult = {repeatValue, endRepeat, endRepeatDate, customResult}
-            console.log(repeatResult)
-            this.$emit("repeatConfirm", repeatResult)
+            this.localRepeatResult = {repeatValue, endRepeat, endRepeatDate, customResult}
+            this.$emit("repeatConfirm", this.localRepeatResult)
         },
         handleRepeatCancel() {
             this.$emit("repeatCancel")

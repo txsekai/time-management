@@ -21,7 +21,7 @@
                                 }}</span>
                         </el-row>
 
-                        <el-row v-html="formattedRepeatResult(repeatResult)"></el-row>
+                        <el-row v-html="formattedRepeatResult(localRepeatResult)"></el-row>
 
                         <el-row v-if="task.selectedPriority!==''">
                             <i v-for="starCount in task.selectedPriority" :key="starCount" class="el-icon-star-on"></i>
@@ -69,11 +69,11 @@
 
         <date-and-time-dialog :date-and-time-dialog-visible="dateAndTimeDialogVisible"
                               :task="currentTask"
-                              @confirm="dateAndTimeDialogVisible=false"
-                              @cancel="dateAndTimeDialogVisible=false"
+                              @dateConfirm="handleDateConfirm"
+                              @dateCancel="dateAndTimeDialogVisible=false"
                               :date-and-time-bk="dateAndTimeBk"
                               @delete="dateAndTimeDialogVisible=false"
-                              :repeat-result="repeatResult"
+                              :repeat-result="localRepeatResult"
         ></date-and-time-dialog>
 
 
@@ -122,7 +122,7 @@ export default {
             dateAndTimeDialogVisible: false,
             dateAndTimeBk: {startTime: null, completedTime: null},
 
-            repeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
+            localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
         }
     },
 
@@ -184,6 +184,10 @@ export default {
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
             this.dateAndTimeBk = Object.assign({}, task.dateAndTime)
+        },
+        handleDateConfirm(dateAndTime, localRepeatResult) {
+            this.localRepeatResult = localRepeatResult
+            this.dateAndTimeDialogVisible = false
         },
         handlePriorityCommand(task, command) {
             task.selectedPriority = command

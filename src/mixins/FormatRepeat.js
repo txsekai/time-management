@@ -6,8 +6,8 @@ const RepeatMixin = {
     computed: {
         formattedSelectedLabel() {
             // TODO 这种写法正确吗？
-            const sortedIndex = [...(this.customResult?.selectedItem || this.repeatResult.customResult.selectedItem)].sort((a, b) => a - b)
-            switch (this.customResult?.frequencyValue || this.repeatResult.customResult.frequencyValue) {
+            const sortedIndex = [...(this.customResult?.selectedItem || this.localRepeatResult.customResult.selectedItem)].sort((a, b) => a - b)
+            switch (this.customResult?.frequencyValue || this.localRepeatResult.customResult.frequencyValue) {
                 case REPEAT_SELECT.WEEK:
                     return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、 ');
                 case REPEAT_SELECT.MONTH:
@@ -29,26 +29,26 @@ const RepeatMixin = {
         getRepeatValueLabel(key) {
             return convertLabel(key)
         },
-        formattedRepeatResult(repeatResult) {
+        formattedRepeatResult(localRepeatResult) {
             let formattedRepeat = ''
 
-            if (repeatResult.repeatValue !== null) {
-                formattedRepeat = `重复：${this.getRepeatValueLabel(repeatResult.repeatValue)}`
+            if (localRepeatResult.repeatValue !== null) {
+                formattedRepeat = `重复：${this.getRepeatValueLabel(localRepeatResult.repeatValue)}`
 
-                if (repeatResult.endRepeat !== null) {
-                    formattedRepeat = formattedRepeat + ` 结束重复： ${this.getRepeatValueLabel(repeatResult.endRepeat)}`
+                if (localRepeatResult.endRepeat !== null) {
+                    formattedRepeat = formattedRepeat + ` 结束重复： ${this.getRepeatValueLabel(localRepeatResult.endRepeat)}`
 
-                    if (repeatResult.endRepeat == REPEAT_SELECT.ENDREPEATSELECTEDDATE) {
-                        formattedRepeat = `重复：${this.getRepeatValueLabel(repeatResult.repeatValue)} 结束重复： ${this.formatDate(repeatResult.endRepeatDate)}`
+                    if (localRepeatResult.endRepeat == REPEAT_SELECT.ENDREPEATSELECTEDDATE) {
+                        formattedRepeat = `重复：${this.getRepeatValueLabel(localRepeatResult.repeatValue)} 结束重复： ${this.formatDate(localRepeatResult.endRepeatDate)}`
                     }
                 }
 
-                if (repeatResult.customResult.num !== null) {
-                    formattedRepeat = formattedRepeat + `<br>每${repeatResult.customResult.num}${repeatResult.customResult.frequencyValue == REPEAT_SELECT.MONTH ? '个' : ''}${this.getRepeatValueLabel(repeatResult.customResult.frequencyValue)}${this.formattedSelectedLabel}重复`
+                if (localRepeatResult.customResult.num !== null) {
+                    formattedRepeat = formattedRepeat + `<br>每${localRepeatResult.customResult.num}${localRepeatResult.customResult.frequencyValue == REPEAT_SELECT.MONTH ? '个' : ''}${this.getRepeatValueLabel(localRepeatResult.customResult.frequencyValue)}${this.formattedSelectedLabel}重复`
                 }
             }
 
-            return repeatResult.repeatValue == null ? '' : formattedRepeat
+            return localRepeatResult.repeatValue == null ? '' : formattedRepeat
         },
     },
 }
