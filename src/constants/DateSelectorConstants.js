@@ -34,5 +34,3 @@ export function convertLabel(key){
     }
     return dict[key]
 }
-
-// TODO 1. 改成字典 2. customRepeatItem里面常量也定义到这里 3. user-select:none

@@ -21,6 +21,8 @@
                                 }}</span>
                         </el-row>
 
+                        <el-row v-html="formattedRepeatResult(repeatResult)"></el-row>
+
                         <el-row v-if="task.selectedPriority!==''">
                             <i v-for="starCount in task.selectedPriority" :key="starCount" class="el-icon-star-on"></i>
                         </el-row>
@@ -71,6 +73,7 @@
                               @cancel="dateAndTimeDialogVisible=false"
                               :date-and-time-bk="dateAndTimeBk"
                               @delete="dateAndTimeDialogVisible=false"
+                              :repeat-result="repeatResult"
         ></date-and-time-dialog>
 
 
@@ -81,11 +84,12 @@
 import TagDialog from "@/view/ListPage/Components/TagDialog.vue";
 import DateAndTimeDialog from "@/view/ListPage/Components/DateAndTimeDialog.vue";
 import DateMixin from "@/mixins/FormatDate";
+import RepeatMixin from "@/mixins/FormatRepeat";
 
 export default {
     name: 'TaskList',
     components: {DateAndTimeDialog, TagDialog},
-    mixins: [DateMixin],
+    mixins: [DateMixin, RepeatMixin],
 
     data() {
         return {
@@ -117,6 +121,8 @@ export default {
 
             dateAndTimeDialogVisible: false,
             dateAndTimeBk: {startTime: null, completedTime: null},
+
+            repeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
         }
     },
 

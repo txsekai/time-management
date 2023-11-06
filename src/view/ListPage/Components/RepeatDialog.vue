@@ -62,7 +62,7 @@
                             :custom-result="customResult"></custom-repeat-item>
 
         <div slot="footer" class="dialog-footer">
-            <el-button class="button-padding" @click="handleRepeatConfirm">确认</el-button>
+            <el-button class="button-padding" @click="handleConfirm">确认</el-button>
             <el-button class="button-padding" @click="handleRepeatCancel">取消</el-button>
         </div>
 
@@ -89,9 +89,6 @@ export default {
         },
         repeatResult: {
             type: Object,
-            default: function () {
-                return {repeatValue: '', endRepeat: '', endRepeatDate: null, customResult: {}}
-            }
         },
     },
 
@@ -149,6 +146,10 @@ export default {
         }
     },
 
+    /*
+    TODO *** big problem 重复选never之后，没有把其他值清为null
+     */
+
     watch: {
         // TODO 从自定义切换为自定义也可以打开dialog
         repeatValue(newValue) {
@@ -169,6 +170,7 @@ export default {
 
                 const currentDate = new Date()
                 currentDate.setDate(currentDate.getDate() + 7)
+                currentDate.setHours(23, 59, 59, 999)
                 this.endRepeatDate = currentDate
             }else {
                 this.endDateVisible = false
@@ -186,7 +188,7 @@ export default {
         更改一个重复的事项，会提示只更改该事项还是将来的都改
          */
 
-        handleRepeatConfirm() {
+        handleConfirm() {
             const {repeatValue, endRepeat, endRepeatDate, customResult} = this
             const repeatResult = {repeatValue, endRepeat, endRepeatDate, customResult}
             console.log(repeatResult)

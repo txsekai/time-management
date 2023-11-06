@@ -89,9 +89,9 @@
 
         </div>
 
-        <el-row class="mt16">
+        <el-row class="mt24">
             <el-button @click="handleOpenRepeatDialog">重复</el-button>
-            <div>{{ repeatResult }}</div>
+            <el-row class="mt8" v-html="formattedRepeatResult(repeatResult)"></el-row>
         </el-row>
 
         <div slot="footer" class="dialog-footer">
@@ -115,11 +115,12 @@ import TimeItem from "@/view/ListPage/Components/TimeItem.vue";
 import DateItem from "@/view/ListPage/Components/DateItem.vue";
 import RepeatDialog from "@/view/ListPage/Components/RepeatDialog.vue";
 import DateMixin from "@/mixins/FormatDate";
+import RepeatMixin from "@/mixins/FormatRepeat";
 
 export default {
     name: 'DateAndTimeDialog',
     components: {RepeatDialog, DateItem, TimeItem},
-    mixins: [DateMixin],
+    mixins: [DateMixin, RepeatMixin],
 
     props: {
         dateAndTimeDialogVisible: {
@@ -138,6 +139,9 @@ export default {
                 return {startTime: null, completedTime: null}
             }
         },
+        repeatResult: {
+            type: Object,
+        }
     },
 
     data() {
@@ -175,7 +179,6 @@ export default {
             },
 
             repeatDialogVisible: false,
-            repeatResult: {repeatValue: '', endRepeat: '', endRepeatDate: null, customResult: {}}
         }
     },
 
@@ -293,7 +296,7 @@ export default {
                     this.completedTime = null
                 }
             }
-        }
+        },
     },
 
     computed: {
@@ -395,7 +398,7 @@ export default {
         handleRepeatConfirm(repeatResult) {
             this.repeatDialogVisible = false
             this.repeatResult = repeatResult
-        }
+        },
     },
 }
 </script>
