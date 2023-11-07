@@ -21,7 +21,7 @@
                                 }}</span>
                         </el-row>
 
-                        <el-row v-html="formattedRepeatResult(localRepeatResult)"></el-row>
+                        <el-row v-html="formattedRepeatResult(task.localRepeatResult)"></el-row>
 
                         <el-row v-if="task.selectedPriority!==''">
                             <i v-for="starCount in task.selectedPriority" :key="starCount" class="el-icon-star-on"></i>
@@ -69,11 +69,10 @@
 
         <date-and-time-dialog :date-and-time-dialog-visible="dateAndTimeDialogVisible"
                               :task="currentTask"
-                              @dateConfirm="handleDateConfirm"
+                              @dateConfirm="dateAndTimeDialogVisible=false"
                               @dateCancel="dateAndTimeDialogVisible=false"
                               :date-and-time-bk="dateAndTimeBk"
                               @delete="dateAndTimeDialogVisible=false"
-                              :repeat-result="localRepeatResult"
         ></date-and-time-dialog>
 
 
@@ -100,11 +99,16 @@ export default {
                 tags: [],
                 dateAndTime: {startTime: null, completedTime: null},
                 selectedPriority: '',
+                localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
             }],
             tagDialogVisible: false,
-            currentTask: {content: '', tags: [], dateAndTime: {startTime: null, completedTime: null}},
+            currentTask: {
+                content: '',
+                tags: [],
+                dateAndTime: {startTime: null, completedTime: null},
+                localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
+            },
             tagsBk: [],
-            // showSettings: false,
 
             priorityOptions: [
                 {
@@ -121,8 +125,6 @@ export default {
 
             dateAndTimeDialogVisible: false,
             dateAndTimeBk: {startTime: null, completedTime: null},
-
-            localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
         }
     },
 
@@ -141,6 +143,7 @@ export default {
                 tags: [],
                 dateAndTime: {startTime: null, completedTime: null},
                 selectedPriority: '',
+                localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
             }
             this.taskList.push(newTask);
             this.currentTask = newTask
@@ -156,7 +159,6 @@ export default {
             task.editing = true
 
             this.currentTask = task
-
 
             this.$nextTick(() => {
                 document.getElementById('task_input_' + index).focus()
@@ -184,10 +186,6 @@ export default {
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
             this.dateAndTimeBk = Object.assign({}, task.dateAndTime)
-        },
-        handleDateConfirm(dateAndTime, localRepeatResult) {
-            this.localRepeatResult = localRepeatResult
-            this.dateAndTimeDialogVisible = false
         },
         handlePriorityCommand(task, command) {
             task.selectedPriority = command

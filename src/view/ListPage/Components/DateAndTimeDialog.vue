@@ -9,65 +9,65 @@
             :close-on-press-escape="false"
     >
         <!--        TODO 不要这么多row-->
-                <el-row>
-                    <el-col :span="12">
-                        <span class="content-font-size">开始日期</span>
-                    </el-col>
+        <el-row>
+            <el-col :span="12">
+                <span class="content-font-size">开始日期</span>
+            </el-col>
 
-                    <el-col :span="12">
-                        <span class="content-font-size">完成日期 </span>
-                        <el-switch
-                                style="width: 3.6rem"
-                                v-model="completedDateVisible"
-                                active-color="#cf711f"
-                        ></el-switch>
-                    </el-col>
-                </el-row>
+            <el-col :span="12">
+                <span class="content-font-size">完成日期 </span>
+                <el-switch
+                        style="width: 3.6rem"
+                        v-model="completedDateVisible"
+                        active-color="#cf711f"
+                ></el-switch>
+            </el-col>
+        </el-row>
 
-                <el-row class="mt6">
-                    <el-col :span="12">
-                        <date-item v-model="startTime" :align="'left'"
-                                   :picker-options="pickerOptionsStartDate"></date-item>
-                    </el-col>
+        <el-row class="mt6">
+            <el-col :span="12">
+                <date-item v-model="startTime" :align="'left'"
+                           :picker-options="pickerOptionsStartDate"></date-item>
+            </el-col>
 
-                    <el-col :span="12" v-show="completedDateVisible">
-                        <date-item v-model="completedTime" :align="'right'"
-                                   :picker-options="pickerOptionsCompletedDate"></date-item>
-                    </el-col>
-                </el-row>
+            <el-col :span="12" v-show="completedDateVisible">
+                <date-item v-model="completedTime" :align="'right'"
+                           :picker-options="pickerOptionsCompletedDate"></date-item>
+            </el-col>
+        </el-row>
 
-                <el-row class="mt24">
-                    <el-col :span="12">
-                        <span class="content-font-size">开始时间 </span>
-                        <el-switch
-                                style="width: 3.6rem"
-                                v-model="startTimeVisible"
-                                active-color="#cf711f"
-                        ></el-switch>
-                    </el-col>
+        <el-row class="mt24">
+            <el-col :span="12">
+                <span class="content-font-size">开始时间 </span>
+                <el-switch
+                        style="width: 3.6rem"
+                        v-model="startTimeVisible"
+                        active-color="#cf711f"
+                ></el-switch>
+            </el-col>
 
-                    <el-col :span="12">
-                        <span class="content-font-size">完成时间 </span>
-                        <el-switch
-                                style="width: 3.6rem"
-                                v-model="completedTimeVisible"
-                                active-color="#cf711f"
-                        ></el-switch>
-                    </el-col>
-                </el-row>
+            <el-col :span="12">
+                <span class="content-font-size">完成时间 </span>
+                <el-switch
+                        style="width: 3.6rem"
+                        v-model="completedTimeVisible"
+                        active-color="#cf711f"
+                ></el-switch>
+            </el-col>
+        </el-row>
 
-                <el-row class="mt3">
-                    <el-col :span="6" v-show="startTimeVisible">
-                        <time-item v-model="startTime"></time-item>
-                    </el-col>
+        <el-row class="mt3">
+            <el-col :span="6" v-show="startTimeVisible">
+                <time-item v-model="startTime"></time-item>
+            </el-col>
 
-                    <el-col v-show="startTimeVisible" :span="6" style="min-height: 1rem"></el-col>
-                    <el-col v-show="!startTimeVisible" :span="12" style="min-height: 1rem"></el-col>
+            <el-col v-show="startTimeVisible" :span="6" style="min-height: 1rem"></el-col>
+            <el-col v-show="!startTimeVisible" :span="12" style="min-height: 1rem"></el-col>
 
-                    <el-col :span="6" v-show="completedTimeVisible">
-                        <time-item v-model="completedTime"></time-item>
-                    </el-col>
-                </el-row>
+            <el-col :span="6" v-show="completedTimeVisible">
+                <time-item v-model="completedTime"></time-item>
+            </el-col>
+        </el-row>
 
         <el-row class="mt12">
             <el-col :span="24" style="min-height: 1rem">
@@ -130,7 +130,10 @@ export default {
         task: {
             type: Object,
             default: function () {
-                return {dateAndTime: {startTime: null, completedTime: null}}
+                return {
+                    dateAndTime: {startTime: null, completedTime: null},
+                    localRepeatResult: {repeatValue: null, endRepeat: null, endRepeatDate: null, customResult: {}}
+                }
             }
         },
         dateAndTimeBk: {
@@ -139,9 +142,6 @@ export default {
                 return {startTime: null, completedTime: null}
             }
         },
-        repeatResult: {
-            type: Object,
-        }
     },
 
     data() {
@@ -184,7 +184,6 @@ export default {
     },
 
     created() {
-        this.localRepeatResult = this.repeatResult
     },
 
     watch: {
@@ -221,6 +220,8 @@ export default {
                         this.completedTimeVisible = false
                     }
                 }
+
+                this.localRepeatResult = newTask.localRepeatResult
             },
             deep: true
         },
@@ -302,9 +303,6 @@ export default {
                 }
             }
         },
-        repeatResult(val) {
-            this.localRepeatResult = val
-        },
     },
 
     computed: {
@@ -374,7 +372,8 @@ export default {
             if (this.validateTime()) {
                 this.task.dateAndTime.startTime = this.startTime;
                 this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime : null;
-                this.$emit("dateConfirm", this.task.dateAndTime, this.localRepeatResult)
+                console.log(this.task)
+                this.$emit("dateConfirm", this.task)
             }
         },
         handleDateCancel() {
@@ -406,6 +405,7 @@ export default {
         handleRepeatConfirm(localRepeatResult) {
             this.repeatDialogVisible = false
             this.localRepeatResult = localRepeatResult
+            this.task.localRepeatResult = localRepeatResult
         },
     },
 }

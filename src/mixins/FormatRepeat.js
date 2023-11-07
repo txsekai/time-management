@@ -6,14 +6,14 @@ const RepeatMixin = {
     computed: {
         formattedSelectedLabel() {
             // TODO 这种写法正确吗？
-            const sortedIndex = [...(this.customResult?.selectedItem || this.localRepeatResult.customResult.selectedItem)].sort((a, b) => a - b)
-            switch (this.customResult?.frequencyValue || this.localRepeatResult.customResult.frequencyValue) {
+            const sortedIndex = [...(this.customResult?.selectedItem || this.localRepeatResult?.customResult.selectedItem || this.currentTask.localRepeatResult.customResult.selectedItem)].sort((a, b) => a - b)
+            switch (this.customResult?.frequencyValue || this.localRepeatResult?.customResult.frequencyValue || this.currentTask.localRepeatResult.customResult.frequencyValue) {
                 case REPEAT_SELECT.WEEK:
-                    return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、 ');
+                    return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、');
                 case REPEAT_SELECT.MONTH:
-                    return sortedIndex.map(day => `${day + 1}日`).join('、 ')
+                    return sortedIndex.map(day => `${day + 1}日`).join('、')
                 case REPEAT_SELECT.YEAR:
-                    return sortedIndex.map(month => `${month + 1}月`).join('、 ')
+                    return sortedIndex.map(month => `${month + 1}月`).join('、')
                 default:
                     return null;
             }
@@ -44,7 +44,11 @@ const RepeatMixin = {
                 }
 
                 if (localRepeatResult.customResult.num !== null) {
-                    formattedRepeat = formattedRepeat + `<br>每${localRepeatResult.customResult.num}${localRepeatResult.customResult.frequencyValue == REPEAT_SELECT.MONTH ? '个' : ''}${this.getRepeatValueLabel(localRepeatResult.customResult.frequencyValue)}${this.formattedSelectedLabel}重复`
+                    formattedRepeat = formattedRepeat +
+                        `<br>每${localRepeatResult.customResult.num}`+
+                        `${localRepeatResult.customResult.frequencyValue == REPEAT_SELECT.MONTH ? '个' : ''}`+
+                        `${this.getRepeatValueLabel(localRepeatResult.customResult.frequencyValue)}`+
+                        `${this.formattedSelectedLabel}重复`
                 }
             }
 
