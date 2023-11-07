@@ -3,11 +3,24 @@ import formatDate from "@/mixins/FormatDate";
 
 const RepeatMixin = {
     mixins: [formatDate],
+    data:function(){
+        return {
+            labelFormatHolder: {
+                selectedRepeatList:[],
+                frequencyValue: '',
+            }
+        }
+    },
     computed: {
         formattedSelectedLabel() {
-            // TODO 这种写法正确吗？
-            const sortedIndex = [...(this.customResult?.selectedItem || this.localRepeatResult?.customResult.selectedItem || this.currentTask.localRepeatResult.customResult.selectedItem)].sort((a, b) => a - b)
-            switch (this.customResult?.frequencyValue || this.localRepeatResult?.customResult.frequencyValue || this.currentTask.localRepeatResult.customResult.frequencyValue) {
+            return this.formatSelectedRepeatOption(this.labelFormatHolder.frequencyValue,this.labelFormatHolder.selectedRepeatList)
+        }
+    },
+
+    methods: {
+        formatSelectedRepeatOption(frequencyValue, selectedRepeatList){
+            const sortedIndex = [...(selectedRepeatList)].sort((a, b) => a - b)
+            switch (frequencyValue) {
                 case REPEAT_SELECT.WEEK:
                     return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、');
                 case REPEAT_SELECT.MONTH:
@@ -19,9 +32,6 @@ const RepeatMixin = {
             }
         },
 
-    },
-
-    methods: {
         formattedShowWeek(weekOptions) {
             const weekDays = ['一', '二', '三', '四', '五', '六', '日']
             return weekOptions.map(option => weekDays[option])
@@ -48,7 +58,7 @@ const RepeatMixin = {
                         `<br>每${localRepeatResult.customResult.num}`+
                         `${localRepeatResult.customResult.frequencyValue == REPEAT_SELECT.MONTH ? '个' : ''}`+
                         `${this.getRepeatValueLabel(localRepeatResult.customResult.frequencyValue)}`+
-                        `${this.formattedSelectedLabel}重复`
+                        `${this.formatSelectedRepeatOption(localRepeatResult.customResult.frequencyValue, localRepeatResult.customResult.selectedItem)}重复`
                 }
             }
 

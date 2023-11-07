@@ -108,7 +108,9 @@ export default {
             while (this.customResult.selectedItem.length > 0) {
                 this.customResult.selectedItem.pop();
             }
-        }
+            this.labelFormatHolder.frequencyValue = this.customResult.frequencyValue
+            this.labelFormatHolder.selectedRepeatList = this.customResult.selectedItem
+        },
     },
 
     computed: {

@@ -372,8 +372,8 @@ export default {
             if (this.validateTime()) {
                 this.task.dateAndTime.startTime = this.startTime;
                 this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime : null;
-                console.log(this.task)
-                this.$emit("dateConfirm", this.task)
+                this.task.localRepeatResult = this.localRepeatResult
+                this.$emit("dateConfirm")
             }
         },
         handleDateCancel() {
@@ -404,8 +404,9 @@ export default {
         },
         handleRepeatConfirm(localRepeatResult) {
             this.repeatDialogVisible = false
+            this.labelFormatHolder.selectedRepeatList = localRepeatResult.customResult.selectedItem
+            this.labelFormatHolder.frequencyValue = localRepeatResult.customResult.frequencyValue
             this.localRepeatResult = localRepeatResult
-            this.task.localRepeatResult = localRepeatResult
         },
     },
 }

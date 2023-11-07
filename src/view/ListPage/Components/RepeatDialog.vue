@@ -140,6 +140,8 @@ export default {
 
     created() {
         this.localRepeatResult = this.repeatResult
+
+        this.initLocalVariables(this.repeatResult)
     },
 
     computed: {
@@ -155,6 +157,8 @@ export default {
     watch: {
         repeatResult(val) {
             this.localRepeatResult = val
+
+            this.initLocalVariables(val)
         },
         // TODO 从自定义切换为自定义也可以打开dialog
         repeatValue(newValue) {
@@ -170,14 +174,14 @@ export default {
         },
 
         endRepeat(newValue) {
-            if(newValue === REPEAT_SELECT.ENDREPEATSELECTEDDATE) {
+            if (newValue === REPEAT_SELECT.ENDREPEATSELECTEDDATE) {
                 this.endDateVisible = true
 
                 const currentDate = new Date()
                 currentDate.setDate(currentDate.getDate() + 7)
                 currentDate.setHours(23, 59, 59, 999)
                 this.endRepeatDate = currentDate
-            }else {
+            } else {
                 this.endDateVisible = false
                 this.endRepeatDate = null
             }
@@ -193,6 +197,12 @@ export default {
         更改一个重复的事项，会提示只更改该事项还是将来的都改
          */
 
+        initLocalVariables(value) {
+            this.repeatValue = value.repeatValue !== null ? value.repeatValue : REPEAT_SELECT.NEVER
+            this.endRepeat = value.endRepeat !== null ? value.endRepeat : REPEAT_SELECT.NEVER
+            this.endRepeatDate = value.endRepeatDate !== null ? value.endRepeatDate : new Date()
+            this.customResult = value.customResult !== null ? value.customResult : {}
+        },
         handleConfirm() {
             const {repeatValue, endRepeat, endRepeatDate, customResult} = this
             this.localRepeatResult = {repeatValue, endRepeat, endRepeatDate, customResult}
