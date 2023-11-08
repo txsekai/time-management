@@ -103,6 +103,10 @@ export default {
         this.initYearOptions()
     },
 
+    /* TODO
+    问题1：task1选择的frequencyValue和task2的frequencyValue不一样，就会走进这个watch，就清空selectedItem
+     */
+
     watch: {
         'customResult.frequencyValue'() {
             while (this.customResult.selectedItem.length > 0) {

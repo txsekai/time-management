@@ -150,17 +150,13 @@ export default {
         }
     },
 
-    /*
-    TODO *** big problem 重复选never之后，没有把其他值清为null
-     */
-
     watch: {
         repeatResult(val) {
             this.localRepeatResult = val
 
             this.initLocalVariables(val)
         },
-        // TODO 从自定义切换为自定义也可以打开dialog
+
         repeatValue(newValue) {
             if (newValue === REPEAT_SELECT.CUSTOM) {
                 this.endRepeatVisible = true;
@@ -170,6 +166,11 @@ export default {
                 this.endRepeatVisible = newValue !== REPEAT_SELECT.NEVER;
 
                 this.customResult = {num: null, frequencyValue: null, selectedItem: null}
+
+                if(newValue === REPEAT_SELECT.NEVER) {
+                    this.endRepeat = null
+                    this.endRepeatDate = null
+                }
             }
         },
 
