@@ -105,7 +105,6 @@ export default {
 
     /* TODO
     问题1：task1选择的frequencyValue和task2的frequencyValue不一样，就会走进这个watch，就清空selectedItem
-    问题2：重复选自定义，frequencyValue为天，传给dateAndTime为null
      */
 
     watch: {

@@ -21,6 +21,8 @@ const RepeatMixin = {
         formatSelectedRepeatOption(frequencyValue, selectedRepeatList){
             const sortedIndex = [...(selectedRepeatList)].sort((a, b) => a - b)
             switch (frequencyValue) {
+                case REPEAT_SELECT.DAY:
+                    return ''
                 case REPEAT_SELECT.WEEK:
                     return this.formattedShowWeek(sortedIndex).map(week => `星期${week}`).join('、');
                 case REPEAT_SELECT.MONTH:
