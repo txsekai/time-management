@@ -167,9 +167,10 @@ export default {
 
                 this.customResult = {num: null, frequencyValue: null, selectedItem: null}
 
+                this.endRepeat = REPEAT_SELECT.NEVER
+
                 if(newValue === REPEAT_SELECT.NEVER) {
                     this.endRepeat = null
-                    this.endRepeatDate = null
                 }
             }
         },
