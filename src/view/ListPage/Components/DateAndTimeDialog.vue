@@ -372,7 +372,9 @@ export default {
             if (this.validateTime()) {
                 this.task.dateAndTime.startTime = this.startTime;
                 this.task.dateAndTime.completedTime = this.completedTimeVisible || this.completedDateVisible ? this.completedTime : null;
-                this.task.localRepeatResult = this.localRepeatResult
+                // TODO deep clone customResult
+                this.task.localRepeatResult = JSON.parse(JSON.stringify(this.localRepeatResult))
+                console.log(this.task.localRepeatResult === this.localRepeatResult)
                 this.$emit("dateConfirm")
             }
         },

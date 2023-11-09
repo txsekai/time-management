@@ -5,6 +5,7 @@
                 <input style="margin: 0.2rem" type="checkbox" v-model="task.complete"/>
                 <div class="task-detail">
                     <template v-if="!task.editing">
+<!--                        TODO 整个task的内容应该都可以点击-->
                         <div class="edit-task" @click="startEditing(task, index)">{{ task.content }}</div>
                         <el-row class="tag-row">
                             <el-tag class="tag-group"
@@ -178,6 +179,8 @@ export default {
         },
         openTagDialog(task) {
             // TODO 定义共同openDialog的方法
+
+            // TODO 在编辑时候已经赋值给currentTask了
             this.currentTask = task;
             this.tagsBk = Object.assign([], task.tags);
             this.tagDialogVisible = true
@@ -186,6 +189,10 @@ export default {
             this.dateAndTimeDialogVisible = true
             this.currentTask = task
             this.dateAndTimeBk = Object.assign({}, task.dateAndTime)
+            // this.dateAndTimeBk = {
+            //     startTime: new Date(task.dateAndTime.startTime.getTime()),
+            //     completedTime: new Date(task.dateAndTime.completedTime.getTime())
+            // }
         },
         handlePriorityCommand(task, command) {
             task.selectedPriority = command

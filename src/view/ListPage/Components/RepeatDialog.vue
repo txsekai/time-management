@@ -159,16 +159,13 @@ export default {
 
         repeatValue(newValue) {
             if (newValue === REPEAT_SELECT.CUSTOM) {
+                this.endRepeat = REPEAT_SELECT.NEVER
                 this.endRepeatVisible = true;
-
                 this.customResult = {num: 1, frequencyValue: 'day', selectedItem: []}
             } else {
                 this.endRepeatVisible = newValue !== REPEAT_SELECT.NEVER;
-
                 this.customResult = {num: null, frequencyValue: null, selectedItem: null}
-
                 this.endRepeat = REPEAT_SELECT.NEVER
-
                 if(newValue === REPEAT_SELECT.NEVER) {
                     this.endRepeat = null
                 }
